@@ -1,0 +1,66 @@
+2023-01-20 18:52:33 INFO::Writing function arguments to log file
+2023-01-20 18:52:33 DEBUG::Function arguments
+2023-01-20 18:52:33 DEBUG::Output folder: Resistance_mechanisms
+2023-01-20 18:52:33 DEBUG::Min Abundance: 0.000000
+2023-01-20 18:52:33 DEBUG::Min Prevalence: 0.100000
+2023-01-20 18:52:33 DEBUG::Normalization: NONE
+2023-01-20 18:52:33 DEBUG::Transform: LOG
+2023-01-20 18:52:33 DEBUG::Analysis method: LM
+2023-01-20 18:52:33 DEBUG::Max significance: 0.250000
+2023-01-20 18:52:33 DEBUG::Random effects:
+2023-01-20 18:52:33 DEBUG::Fixed effects: Group,Timepoint
+2023-01-20 18:52:33 DEBUG::Correction method: BH
+2023-01-20 18:52:33 DEBUG::Standardize: TRUE
+2023-01-20 18:52:33 DEBUG::Cores: 1
+2023-01-20 18:52:33 INFO::Verifying options selected are valid
+2023-01-20 18:52:33 INFO::Determining format of input files
+2023-01-20 18:52:33 INFO::Input format is data samples as rows and metadata samples as rows
+2023-01-20 18:52:33 DEBUG::A total of 40 samples were found in both the data and metadata
+2023-01-20 18:52:33 DEBUG::Reordering data/metadata to use same sample ordering
+2023-01-20 18:52:33 INFO::Formula for fixed effects: expr ~  Group + Timepoint
+2023-01-20 18:52:33 INFO::Factor detected for categorial metadata 'Group'. Provide a reference argument or manually set factor ordering to change reference level.
+2023-01-20 18:52:33 INFO::Factor detected for categorial metadata 'Timepoint'. Provide a reference argument or manually set factor ordering to change reference level.
+2023-01-20 18:52:33 INFO::Filter data based on min abundance and min prevalence
+2023-01-20 18:52:33 INFO::Total samples in data: 40
+2023-01-20 18:52:33 INFO::Min samples required with min abundance for a feature not to be filtered: 4.000000
+2023-01-20 18:52:33 INFO::Total filtered features: 2
+2023-01-20 18:52:33 INFO::Filtered feature names from abundance and prevalence filtering: antibiotic.efflux.antibiotic.target.alteration, antibiotic.target.alteration.antibiotic.target.replacement
+2023-01-20 18:52:33 INFO::Total filtered features with variance filtering: 0
+2023-01-20 18:52:33 INFO::Filtered feature names from variance filtering:
+2023-01-20 18:52:33 INFO::Running selected normalization method: NONE
+2023-01-20 18:52:33 INFO::Applying z-score to standardize continuous metadata
+2023-01-20 18:52:33 INFO::Running selected transform method: LOG
+2023-01-20 18:52:33 INFO::Running selected analysis method: LM
+2023-01-20 18:52:33 INFO::Fitting model to feature number 1, antibiotic.inactivation
+2023-01-20 18:52:33 INFO::Fitting model to feature number 2, antibiotic.efflux
+2023-01-20 18:52:33 INFO::Fitting model to feature number 3, antibiotic.target.protection
+2023-01-20 18:52:33 INFO::Fitting model to feature number 4, antibiotic.target.alteration
+2023-01-20 18:52:33 INFO::Fitting model to feature number 5, antibiotic.target.replacement
+2023-01-20 18:52:33 INFO::Fitting model to feature number 6, antibiotic.efflux.reduced.permeability.to.antibiotic
+2023-01-20 18:52:33 INFO::Fitting model to feature number 7, reduced.permeability.to.antibiotic
+2023-01-20 18:52:33 INFO::Counting total values for each feature
+2023-01-20 18:52:33 INFO::Writing filtered data to file Resistance_mechanisms/features/filtered_data.tsv
+2023-01-20 18:52:33 INFO::Writing filtered, normalized data to file Resistance_mechanisms/features/filtered_data_norm.tsv
+2023-01-20 18:52:33 INFO::Writing filtered, normalized, transformed data to file Resistance_mechanisms/features/filtered_data_norm_transformed.tsv
+2023-01-20 18:52:33 WARNING::Deleting existing residuals file: Resistance_mechanisms/fits/residuals.rds
+2023-01-20 18:52:34 INFO::Writing residuals to file Resistance_mechanisms/fits/residuals.rds
+2023-01-20 18:52:34 WARNING::Deleting existing fitted file: Resistance_mechanisms/fits/fitted.rds
+2023-01-20 18:52:34 INFO::Writing fitted values to file Resistance_mechanisms/fits/fitted.rds
+2023-01-20 18:52:34 INFO::Writing all results to file (ordered by increasing q-values): Resistance_mechanisms/all_results.tsv
+2023-01-20 18:52:34 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): Resistance_mechanisms/significant_results.tsv
+2023-01-20 18:52:34 INFO::Writing heatmap of significant results to file: Resistance_mechanisms/heatmap.pdf
+2023-01-20 18:52:34 INFO::Writing association plots (one for each significant association) to output folder: Resistance_mechanisms
+2023-01-20 18:52:34 INFO::Plotting associations from most to least significant, grouped by metadata
+2023-01-20 18:52:34 INFO::Plotting data for metadata number 1, Group
+2023-01-20 18:52:34 INFO::Creating boxplot for categorical data, Group vs antibiotic.inactivation
+2023-01-20 18:52:34 INFO::Creating boxplot for categorical data, Group vs antibiotic.efflux
+2023-01-20 18:52:34 INFO::Creating boxplot for categorical data, Group vs reduced.permeability.to.antibiotic
+2023-01-20 18:52:35 INFO::Creating boxplot for categorical data, Group vs antibiotic.target.alteration
+2023-01-20 18:52:35 INFO::Creating boxplot for categorical data, Group vs antibiotic.efflux.reduced.permeability.to.antibiotic
+2023-01-20 18:52:35 INFO::Creating boxplot for categorical data, Group vs antibiotic.target.replacement
+2023-01-20 18:52:37 INFO::Plotting data for metadata number 2, Timepoint
+2023-01-20 18:52:37 INFO::Creating boxplot for categorical data, Timepoint vs antibiotic.efflux
+2023-01-20 18:52:37 INFO::Creating boxplot for categorical data, Timepoint vs reduced.permeability.to.antibiotic
+2023-01-20 18:52:38 INFO::Creating boxplot for categorical data, Timepoint vs antibiotic.target.replacement
+2023-01-20 18:52:38 INFO::Creating boxplot for categorical data, Timepoint vs antibiotic.inactivation
+2023-01-20 18:52:38 INFO::Creating boxplot for categorical data, Timepoint vs antibiotic.efflux.reduced.permeability.to.antibiotic

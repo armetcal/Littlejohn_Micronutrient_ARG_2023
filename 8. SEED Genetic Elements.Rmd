@@ -1,0 +1,319 @@
+---
+title: "Fungal Analysis"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r Load Elements}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+
+# Load data
+df = read.csv("Data Files/SEED_abundances.csv")
+
+# Taxonomy
+t = df %>% select(contains('Subsystem'),Function) %>% 
+  mutate(OTU = paste(Subsystem.Level.1,Subsystem.Level.2,Subsystem.Level.3, Function,sep='|')) %>% 
+  mutate_all(function(x)str_replace_all(x,"'",'.')) %>% 
+  column_to_rownames('OTU') %>% as.matrix %>% tax_table()
+
+# Abundance
+o = df %>% select(-all_of(colnames(t))) %>% as.matrix %>% `rownames<-`(rownames(t))
+
+# Convert to TPM
+cs = colSums(o)/1e6 # Denominator
+o2 = (t(o)/cs) %>% t()
+
+# Sample data
+s = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$Sample) %>% 
+  mutate(Mouse = str_remove(Sample,'_D0') %>% str_remove('_D28'))
+
+# Phyloseq object
+ps = phyloseq(sample_data(s),otu_table(o2,taxa_are_rows=T),t)
+ps@sam_data$Group = factor(ps@sam_data$Group, levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
+
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+
+# SEED Maaslin2 results
+maas = readxl::read_xlsx('Results Files/Functional/Maaslin2_SEED_D28.xlsx',sheet = 'All Results')
+```
+
+# Total TEs
+
+```{r}
+te = ps %>% tax_glom('Subsystem.Level.2') %>% 
+  subset_taxa(Subsystem.Level.2 == 'Transposable elements') %>% 
+  psmelt() %>% rename(te = Abundance)
+
+pval = maas %>% filter(Level=='SL2', Subsystem.Level.2 == 'Transposable elements')
+
+te %>% filter(Day=='Day 28') %>% 
+  ggplot(aes(Diet, te, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_jitter(height=0,width=0.2) +
+  theme_classic(base_size = 18) + 
+  ylab('Transposable Elements (TPM)') + xlab(NULL) +
+  geom_text(aes(x=1.5,y=28000,label=paste0('P = ',signif(pval$pval,2))), size = 5,lineheight=0.8,hjust=0.5) +
+  geom_segment(y = 27000, yend = 27000, x = 1, xend=2,size=0.8) +
+  theme(legend.position = 'none')
+
+ggsave('Plots/Functional/SEED/P5_total_te.png', height = 5, width =4.5)
+```
+
+# Conjugative Transposons
+
+```{r Total CT}
+ct = ps %>% tax_glom('Subsystem.Level.3') %>% 
+  subset_taxa(Subsystem.Level.3 == 'Conjugative transposon, Bacteroidales') %>% 
+  psmelt() %>% rename(ct = Abundance)
+
+pval = maas %>% filter(Level=='SL3', Subsystem.Level.3 == 'Conjugative transposon, Bacteroidales')
+
+ct %>% filter(Day=='Day 28') %>% 
+  ggplot(aes(Diet, ct, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_jitter(height=0,width=0.2) +
+  theme_classic(base_size = 18) + 
+  ylab('Conj. Transposons (TPM)') + xlab(NULL) +
+  geom_text(aes(x=1.5,y=28000,label=paste0('P = ',signif(pval$pval,2))), size = 5,lineheight=0.8,hjust=0.5) +
+  geom_segment(y = 27000, yend = 27000, x = 1, xend=2,size=0.8) +
+  theme(legend.position = 'none')
+
+ggsave('Plots/Functional/SEED/P5_total_ct.png', height = 5, width =4.5)
+```
+
+```{r Individual CT}
+temp = ps %>% subset_taxa(Subsystem.Level.3=='Conjugative transposon, Bacteroidales') %>% 
+  subset_taxa(str_detect(Function,'Conjugative_transposon_protein_Tra')) %>% 
+  psmelt %>% filter(Day=='Day 28') %>% 
+  mutate(Function = str_sub(Function,start=32,end=35))
+
+pval = maas %>% filter(Level=='Function', Subsystem.Level.2 == 'Transposable elements',
+                       str_detect(Function,'Conjugative_transposon_protein_Tra')) %>% 
+  mutate(Function = str_sub(Function,start=32,end=35)) %>% 
+  select(Function,pval) %>% 
+  mutate(qval = p.adjust(pval,method='BH')) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' **',ifelse(qval>0.0001,' ***','****'))))) 
+
+# Set order
+order = temp %>% filter(Diet=='LM') %>% 
+  group_by(Function) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+max_per_path = temp %>% group_by(Function) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Function = factor(Function, levels = order$Function)) %>% 
+  arrange(Function) %>% mutate(N = c(1:nrow(.))+0.25)
+
+temp %>% 
+  left_join(max_per_path) %>% left_join(pval) %>% 
+  mutate(Function = factor(Function, levels = order$Function)) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Function, Abundance, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+  theme_classic(base_size = 18) + 
+  guides(x = guide_axis(angle = 45)) +
+  ylab('TPM') + xlab('Bacteriodales Conjugative Transposons') +
+  geom_text(aes(x=N,y=M,label=symb), size = 5,lineheight=0.8,hjust=1) +
+  scale_y_log10()
+ggsave('Plots/Functional/SEED/P5_conj_trans_indiv.png', height = 5, width =8)
+```
+
+# Integrons
+
+```{r Class 1}
+temp = ps %>% subset_taxa(Function=='Integron_integrase_IntI1') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28')
+
+pval = maas %>% filter(Level=='Function', Function == 'Integron_integrase_IntI1')
+
+ps %>% subset_taxa(Function=='Integron_integrase_IntI1') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28') %>% 
+  ggplot(aes(Diet, Abundance, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_jitter(height=0,width=0.2) +
+  theme_classic(base_size = 18) + 
+  ylab('Class 1 Integrons (TPM)') + xlab(NULL) +
+  geom_text(aes(x=1.5,y=3.2,label=paste0('P = ',signif(pval$pval,2))), size = 5,lineheight=0.8,hjust=0.5) +
+  geom_segment(y = 3, yend = 3, x = 1, xend=2,size=0.8) +
+  theme(legend.position = 'none')
+
+ggsave('Plots/Functional/SEED/P5_integron_t1.png', height = 5, width =4.5)
+```
+
+```{r Class 2}
+temp = ps %>% subset_taxa(Function=='Integron_integrase_IntI2') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28')
+
+pval = maas %>% filter(Level=='Function', Function == 'Integron_integrase_IntI2')
+
+ps %>% subset_taxa(Function=='Integron_integrase_IntI2') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28') %>% 
+  ggplot(aes(Diet, Abundance, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_jitter(height=0,width=0.2) +
+  theme_classic(base_size = 18) + 
+  ylab('Class 2 Integrons (TPM)') + xlab(NULL) +
+  geom_text(aes(x=1.5,y=24,label=paste0('P = ',signif(pval$pval,2))), size = 5,lineheight=0.8,hjust=0.5) +
+  geom_segment(y = 23, yend = 23, x = 1, xend=2,size=0.8) +
+  theme(legend.position = 'none')
+
+ggsave('Plots/Functional/SEED/P5_integron_t2.png', height = 5, width =4.5)
+```
+
+# Oxidative Stress-Related Genes
+
+```{r}
+to_test = c('Oxidative stress','Oxygen stress response / Human gut microbiome',
+            'Protection from Reactive Oxygen Species','Regulation of Oxidative Stress Response')
+temp = ps %>% tax_glom('Subsystem.Level.3') %>% 
+  subset_taxa(Subsystem.Level.3 %in% to_test) %>% 
+  psmelt()
+
+pval = maas %>% filter(Level=='SL3', Subsystem.Level.3 %in% to_test) %>% 
+  select(Subsystem.Level.3,pval) %>% 
+  mutate(qval=p.adjust(pval,method='BH')) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"*",
+                      ifelse(qval>0.001,'**',ifelse(qval>0.0001,'***','****'))))) 
+
+# Rename
+temp$Subsystem.Level.3[temp$Subsystem.Level.3=='Oxygen stress response / Human gut microbiome'] = 'Oxygen stress response/\nHuman gut microbiome'
+temp$Subsystem.Level.3[temp$Subsystem.Level.3=='Protection from Reactive Oxygen Species'] = 'Protection from Reactive\nOxygen Species'
+temp$Subsystem.Level.3[temp$Subsystem.Level.3=='Regulation of Oxidative Stress Response'] = 'Regulation of Oxidative\nStress Response'
+pval$Subsystem.Level.3[pval$Subsystem.Level.3=='Oxygen stress response / Human gut microbiome'] = 'Oxygen stress response/\nHuman gut microbiome'
+pval$Subsystem.Level.3[pval$Subsystem.Level.3=='Protection from Reactive Oxygen Species'] = 'Protection from Reactive\nOxygen Species'
+pval$Subsystem.Level.3[pval$Subsystem.Level.3=='Regulation of Oxidative Stress Response'] = 'Regulation of Oxidative\nStress Response'
+
+# Set order
+order = temp %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(Subsystem.Level.3) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+max_per_path = temp %>% filter(Day=='Day 28') %>% group_by(Subsystem.Level.3) %>% 
+  summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Subsystem.Level.3 = factor(Subsystem.Level.3, levels = order$Subsystem.Level.3)) %>% mutate(N = c(1:nrow(.))+0.25)
+
+temp %>% 
+  left_join(max_per_path) %>% left_join(pval) %>% 
+  mutate(Subsystem.Level.3 = factor(Subsystem.Level.3, levels = order$Subsystem.Level.3)) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Subsystem.Level.3, Abundance, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+  theme_classic(base_size = 18) + 
+  guides(x = guide_axis(angle = 45)) +
+  ylab('TPM') + xlab(NULL) +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1.5) +
+  scale_y_log10()
+
+ggsave('Plots/Functional/SEED/P5_ox_stress.png', height = 5, width =7)
+```
+
+# Total ARGs vs Total TEs
+
+```{r}
+te = ps %>% tax_glom('Subsystem.Level.2') %>% 
+  subset_taxa(Subsystem.Level.2 == 'Transposable elements') %>% 
+  psmelt() %>% rename(te = Abundance)
+
+# Load ARG master file from CARD database
+card = readxl::read_xlsx('Data Files/CARD/P-00IK_Antibiotic/ARG_master.xlsx') %>% 
+  rename(MDB_ID = SampleID) %>% 
+  select(c(Protein_Accession:Resistance_Mechanism)) %>% 
+  group_by(MDB_ID) %>% 
+  summarize(Count=sum(Count)) %>% ungroup
+
+temp = te %>% left_join(card) %>% filter(Day=='Day 28')
+
+# Stats
+
+df.stats = temp %>%  
+  group_by(Diet) %>% 
+  group_modify(~cor.test(.$te,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup
+
+df.stats = df.stats %>% 
+  mutate(label.lm = paste(Diet,': \u03C1=',as.character(round(estimate,2)),', p=',signif(p.value,2),sep='')) %>%
+  mutate(label.con = ifelse(Diet=='CON',label.lm,NA),
+         label.lm = ifelse(Diet=='LM',label.lm,NA))
+
+#############
+temp %>% filter(Day=='Day 28') %>% 
+  ggplot(aes(te,Count,fill=Diet,col=Diet)) +
+  geom_point() + 
+  geom_smooth(method='lm') +
+  theme_classic(base_size=16) +
+  xlab('Transposable Elements (TPM)') +
+  ylab('Total ARGs (RPKM)') +
+  geom_text(aes(x=5000,y=700,label=label.lm),
+            data = df.stats, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=5000,y=600,label=label.con),
+            data = df.stats, size = 4.5,lineheight=0.8,hjust=0)
+
+ggsave('Plots/Functional/SEED/P5_te_args.png', height = 5, width =7)
+```
+
+# Total ARGs vs Total Ox Stress
+
+```{r}
+to_test = c('Oxidative stress','Oxygen stress response / Human gut microbiome',
+            'Protection from Reactive Oxygen Species','Regulation of Oxidative Stress Response')
+temp = ps %>% tax_glom('Subsystem.Level.3') %>%
+  subset_taxa(Subsystem.Level.3 %in% to_test) %>% 
+  psmelt() %>% rename(te = Abundance)
+
+temp2 = temp %>% select(-OTU) %>% select(-contains('Subsystem')) %>% ungroup() %>% group_by(Sample) %>% mutate(te=sum(te)) %>% ungroup %>% unique
+
+# Load ARG master file from CARD database
+card = readxl::read_xlsx('Data Files/CARD/P-00IK_Antibiotic/ARG_master.xlsx') %>% 
+  rename(MDB_ID = SampleID) %>% 
+  select(c(Protein_Accession:Resistance_Mechanism)) %>% 
+  group_by(MDB_ID) %>% 
+  summarize(Count=sum(Count)) %>% ungroup
+
+temp = temp2 %>% left_join(card) %>% filter(Day=='Day 28')
+
+# Stats
+
+df.stats = temp %>%  
+  group_by(Diet) %>% 
+  group_modify(~cor.test(.$te,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup
+
+df.stats = df.stats %>% 
+  mutate(label.lm = paste(Diet,': \u03C1=',as.character(round(estimate,2)),', p=',signif(p.value,2),sep='')) %>%
+  mutate(label.con = ifelse(Diet=='CON',label.lm,NA),
+         label.lm = ifelse(Diet=='LM',label.lm,NA))
+
+#############
+temp %>% filter(Day=='Day 28') %>% 
+  ggplot(aes(te,Count,fill=Diet,col=Diet)) +
+  geom_point() + 
+  geom_smooth(method='lm') +
+  theme_classic(base_size=16) +
+  xlab('Oxidative Stress Genes (TPM)') +
+  ylab('Total ARGs (RPKM)') +
+  geom_text(aes(x=2800,y=700,label=label.lm),
+            data = df.stats, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=2800,y=600,label=label.con),
+            data = df.stats, size = 4.5,lineheight=0.8,hjust=0)
+
+ggsave('Plots/Functional/SEED/P5_oxstress_args.png', height = 5, width =7)
+```

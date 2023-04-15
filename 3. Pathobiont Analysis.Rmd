@@ -1,0 +1,160 @@
+---
+title: "3. Pathobiont Analysis"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r Load}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+
+# ps output is bacterial, raw counts
+ps = readRDS('Data Files/bacterial_phyloseq.rds')
+
+ps.rel = ps %>% microbiome::transform('compositional')
+
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Bacteriome/Maaslin2_longitudinal_bacteria.xlsx',sheet='All Results')
+
+# Pathobionts of interest
+# Genus level:
+path.genus = c('Streptococcus','Staphylococcus','Enterococcus','Escherichia','Shigella','Haemophilus','Campylobacter','Klebsiella')
+# Species level:
+# NOTE: phocaeicola vulgatus = bacteroides vulgatus
+path.species = c('Phocaeicola vulgatus', 'Prevotella copri','Bacteroides fragilis')
+
+# Extract otu data into table
+g = ps.rel %>% subset_taxa(Genus %in% path.genus) %>% tax_glom('Genus') %>% 
+  psmelt() %>% rename(Pathobiont = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
+sp = ps.rel %>% subset_taxa(Species %in% path.species) %>% tax_glom('Species') %>% 
+  psmelt() %>% rename(Pathobiont = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
+
+maas2 = maas %>% filter((Level=='Genus' & Genus %in% path.genus) | (Level=='Species' & Species %in% path.species)) %>% 
+  mutate(Pathobiont = ifelse(is.na(Species),Genus,Species)) %>% 
+  select(Pathobiont, qval) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+
+# sample-specific data with qvals
+path=rbind(g,sp) %>% left_join(maas2)
+
+# lfc for each path
+lfc = path %>% 
+  group_by(Group,Pathobiont) %>% 
+  summarise(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  pivot_wider(names_from = Group, values_from = Abundance) %>% 
+  mutate(lfc = log2(`LM Day 28`/`CON Day 28`)) %>% 
+  left_join(maas2) %>% 
+  arrange(lfc) %>% 
+  mutate(Pathobiont = factor(Pathobiont, levels = .$Pathobiont),
+         Dir = ifelse(lfc>0,'Pos','Neg'),
+         Sig = qval<0.05)
+```
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```{r Stacked Barplot of Pathobionts}
+stack = path %>% filter(Day == 'Day 28') %>% 
+  group_by(Diet,Pathobiont) %>% 
+  summarise(Abundance = mean(Abundance)) %>% ungroup()
+  
+p1 = stack %>% 
+  ggplot(aes(x = Diet, y = Abundance, fill = Pathobiont)) + 
+  geom_bar(stat="identity") +
+  theme_classic(base_size = 16) + 
+  ylab("Rel Abundance (Day 28)") + xlab('')
+ggsave('Plots/Bacteriome/P3_stackedbar.jpeg', height = 5, width = 5)
+```
+
+```{r Summed Pathobionts}
+summed = path %>% filter(Day == 'Day 28') %>% 
+  group_by(Sample,Diet) %>% 
+  summarise(Abundance = sum(Abundance)) %>% ungroup()
+
+p2 = summed %>%
+  ggplot(aes(Diet, Abundance, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(height = 0, width = 0.2) +
+  theme_classic(base_size = 16) + 
+  ggpubr::stat_compare_means(comparisons = list(c('LM','CON')),size=5)+
+  ylab('Total Pathobionts (Rel Ab, Day 28)') +
+  xlab('') + theme(legend.position = 'none')
+ggsave('Plots/Bacteriome/P3_totalpath_boxplots.jpeg',height = 5, width = 5)
+```
+
+```{r Boxplots of Pathobionts}
+# Set order by factoring
+temp_lfc = lfc %>% arrange(-`LM Day 28`) %>% 
+  mutate(Pathobiont = factor(Pathobiont, levels = .$Pathobiont))
+path$Pathobiont = factor(path$Pathobiont, levels = temp_lfc$Pathobiont)
+maas2$Pathobiont = factor(maas2$Pathobiont, levels = temp_lfc$Pathobiont)
+
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = path %>% group_by(Pathobiont) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Pathobiont = factor(Pathobiont, levels = temp_lfc$Pathobiont))
+max_pos = max_per_path %>% filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc>0]) %>% droplevels() %>%
+  arrange(Pathobiont) %>% mutate(N = c(1:nrow(.))+0.25)
+max_neg = max_per_path %>% filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc<0]) %>% droplevels() %>%
+  arrange(Pathobiont) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Positive Association
+p3p = path %>% left_join(max_pos) %>% 
+  left_join(temp_lfc) %>% left_join(maas2) %>% 
+  filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc>0]) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Pathobiont, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10()
+ggsave('Plots/Bacteriome/P3_indiv_pathobionts_pos.png', height = 5, width =9)
+
+# Negative Association
+p3n = path %>% left_join(max_neg) %>% 
+  left_join(temp_lfc) %>% left_join(maas2) %>% 
+  filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc<0]) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Pathobiont, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10()
+ggsave('Plots/Bacteriome/P3_indiv_pathobionts_neg.png', height = 5, width =6)
+```
+
+```{r Combined Figure}
+g1 = ggarrange(plotlist = list(p1,NULL,p2),ncol=3,widths = c(1.5,0.2,1))
+g2 = ggarrange(plotlist = list(p3p,NULL,p3n),ncol=3,widths = c(6,0.1,3.4),common.legend = T,legend = 'bottom')
+
+ggarrange(plotlist = list(g1,g2),ncol=1, heights = c(2.5,3))
+ggsave('Plots/Bacteriome/P3_combined.jpeg', height = 10, width =10)
+```
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```{r LFC Plot}
+p3.2 = lfc %>% ggplot(aes(Pathobiont,lfc,fill=Dir)) +
+  geom_col(aes(alpha = Sig)) +
+  scale_alpha_discrete(range = c(0.35, 1)) +
+  theme_classic(base_size = 16) +
+  xlab(NULL) + ylab('Log 2 Fold Change (LM/CON)') +
+  theme(legend.position = 'none') +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+ggsave('Plots/Bacteriome/P3_LFC.jpeg',height = 5, width = 10)
+
+g1 = ggarrange(plotlist = list(p1,NULL,p2),ncol=3,widths = c(1.5,0.2,1))
+ggarrange(plotlist = list(g1,p3.2),ncol=1, heights = c(2,2))
+ggsave('Plots/Bacteriome/P3_combined_v2.jpeg', height = 10, width =10)
+```
+

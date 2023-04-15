@@ -1,0 +1,326 @@
+---
+title: "4. Indicator Species"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+library(indicspecies)
+
+# ps output is bacterial, raw counts
+source('0. Initialize Fungal Data.R')
+
+ps.rel = ps %>% microbiome::transform('compositional')
+
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Fungome/Maaslin2_longitudinal_fungi.xlsx',sheet='All Results')
+
+# Melted and pivoted dataset
+df = ps %>% tax_glom('Species') %>% psmelt() %>% 
+  select(-OTU, -c(Kingdom:Genus)) %>% 
+  pivot_wider(names_from = Species, values_from = Abundance) %>% 
+  # Combine Day 0s into one group
+  mutate(grp = ifelse(Day == 'Day 0','Day 0',as.character(Group)))
+```
+
+```{r Indicator Analysis}
+# Analysis groups:
+grps = df$grp
+# Create df of just abundances (raw counts)
+df_ind = df %>% select(-c(Sample:IPITT.AUC),-grp) %>% 
+  `rownames<-`(df$Sample)
+
+# Choose only species above 0.001% mean abundance
+df_rel = df_ind %>% apply(1,function(x)x/sum(x))
+m = rowMeans(df_rel)
+w = which(m>1e-5)
+df_ind = df_ind %>% select(any_of(rownames(df_rel)[w]))
+# Choose only species above 0.3 prevalence
+df_prev = df_rel>0
+m = rowSums(df_prev)/ncol(df_prev)
+w = which(m>0.3)
+df_ind = df_ind %>% select(any_of(rownames(df_rel)[w]))
+
+# Run analysis
+set.seed(711) # For reproducibility
+indval = multipatt(df_ind, grps, control = how(nperm=999))
+# All results, including combinations of groups. However, we want only the indicators that are unique to each group.
+capture.output(summary(indval),'Results Files/Fungome/F2_indicspecies_results_summary_fungi.txt')
+
+# Isolate the Indicator species for each group.
+# Select only high-quality indicators
+ind = indval$sign %>% filter(p.value<0.05, stat>0.7) %>% 
+  dplyr::select(-index) %>%
+  rownames_to_column('Taxonomy_ID') %>%
+  pivot_longer(cols = -c(Taxonomy_ID,stat,p.value), names_to = 'group', values_to = 'Ind' )
+# Select indicators unique to a group
+ind_pos = ind %>%
+  filter(Ind == 1) %>% group_by(Taxonomy_ID) %>% 
+  dplyr::count() %>% ungroup() %>%
+  filter(n==1)
+ind = ind %>% filter(Taxonomy_ID %in% ind_pos$Taxonomy_ID) %>%
+  filter(Ind==1) %>% dplyr::select(-Ind)
+# Remove prefix from groups
+srv = Vectorize(str_remove)
+ind$group = srv(ind$group, 's.')
+# Number of Indicators in each group
+table(ind$group)
+ind = ind %>% arrange(group)
+
+write.csv(ind, 'Results Files/Fungome/P2_indicspecies_unique_results_fungi.csv',row.names=F)
+```
+
+# Increased in 1 group only - NONE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```{r Indic Plot}
+df_plot = df_rel %>% t() %>% as.data.frame() %>% rownames_to_column('Sample') %>% 
+  left_join(df %>% select(Sample:Group) %>% unique) %>% 
+  pivot_longer(cols = -c(Sample,sample_Sample,Diet,Day,Group),names_to = 'Taxonomy_ID', values_to = 'Abundance') %>% 
+  left_join(ind %>% dplyr::rename(Indicator = group)) %>%
+  filter(is.na(Indicator)==F) %>%
+  dplyr::rename(Species = Taxonomy_ID) %>%
+  # left_join(taxonomy) %>% 
+  arrange(Diet) %>% arrange(Day) %>% 
+  mutate(indsp = ifelse(Day == 'Day 0','Day 0',as.character(Group)))
+  
+df_plot$indsp =  factor(df_plot$indsp, levels = c('Day 0','CON Day 28','LM Day 28'))
+
+# Take mean values per group
+df_ind_s_grp = df_plot %>% group_by(indsp,Group,Species) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup %>% 
+  dplyr::rename('Mean Ab.' = Abundance) %>% 
+  left_join(ind %>% rename(Species = Taxonomy_ID)) %>% 
+  rename(Indicator = group)
+
+p = df_ind_s_grp %>% 
+  ggplot(aes(x = Group, y = Species)) +
+  geom_point(aes(color = Indicator, size = `Mean Ab.`), alpha = 0.5) +
+  scale_color_manual(values = c("#E7B800", "#FC4E07", "#00AFBB")) +
+  theme(text = element_text(size=16),
+        panel.background = element_blank(),
+        panel.grid.major = element_line(colour = "#bdbdbd", linetype = "dotted"),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 35, hjust = 1)) +
+  scale_size(range = c(0.5, 12)) + xlab('')
+
+ggsave('Plots/Fungome/P2_indicspecies_fungi.png', height = 4, width = 7)
+```
+
+# Decreased in 1 group only ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```{r}
+# Isolate the Indicator species for each group.
+# Select only high-quality indicators
+ind = indval$sign %>% filter(p.value==0.001, stat>0.7) %>% 
+  dplyr::select(-index) %>%
+  rownames_to_column('Taxonomy_ID') %>%
+  pivot_longer(cols = -c(Taxonomy_ID,stat,p.value), names_to = 'group', values_to = 'Ind' )
+# Select indicators unique to a group
+ind_pos = ind %>%
+  filter(Ind == 1) %>% group_by(Taxonomy_ID) %>% 
+  dplyr::count() %>% ungroup() %>%
+  filter(n==2)
+ind = ind %>% filter(Taxonomy_ID %in% ind_pos$Taxonomy_ID) %>%
+  filter(Ind==0) %>% dplyr::select(-Ind)
+# Remove prefix from groups
+srv = Vectorize(str_remove)
+ind$group = srv(ind$group, 's.')
+# Number of Indicators in each group
+table(ind$group)
+ind = ind %>% arrange(group)
+
+write.csv(ind, 'Results Files/Fungome/P2_indicspecies_depletedin1_results_fungi.csv',row.names=F)
+```
+
+```{r Indic Plot}
+df_plot = df_rel %>% t() %>% as.data.frame() %>% rownames_to_column('Sample') %>% 
+  left_join(df %>% select(Sample:Group) %>% unique) %>% 
+  pivot_longer(cols = -c(Sample,sample_Sample,Diet,Day,Group),names_to = 'Taxonomy_ID', values_to = 'Abundance') %>% 
+  left_join(ind %>% dplyr::rename(Indicator = group)) %>%
+  filter(is.na(Indicator)==F) %>%
+  dplyr::rename(Species = Taxonomy_ID) %>%
+  # left_join(taxonomy) %>% 
+  arrange(Diet) %>% arrange(Day) %>% 
+  mutate(indsp = ifelse(Day == 'Day 0','Day 0',as.character(Group)))
+  
+df_plot$indsp =  factor(df_plot$indsp, levels = c('Day 0','CON Day 28','LM Day 28'))
+
+# Take mean values per group
+df_ind_s_grp = df_plot %>% group_by(indsp,Group,Species) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup %>% 
+  dplyr::rename('Mean Ab.' = Abundance) %>% 
+  left_join(ind %>% rename(Species = Taxonomy_ID)) %>% 
+  rename(Indicator = group)
+
+p = df_ind_s_grp %>% arrange(Indicator) %>% 
+  mutate(Species = factor(Species,levels = unique(.$Species))) %>% 
+  rename(`Indicator\n(Depleted)` = Indicator) %>% 
+  ggplot(aes(x = Group, y = Species)) +
+  geom_point(aes(color = `Indicator\n(Depleted)`, size = `Mean Ab.`), alpha = 0.5) +
+  scale_color_manual(values = c("#E7B800", "#00AFBB")) +
+  theme(text = element_text(size=16),
+        panel.background = element_blank(),
+        panel.grid.major = element_line(colour = "#bdbdbd", linetype = "dotted"),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 35, hjust = 1)) +
+  scale_size(range = c(0.5, 12)) + xlab('')
+
+ggsave('Plots/Fungome/P2_indicspecies_fungi_depletedin1.png', height = 5, width = 7)
+```
+
+```{r Plot taxa of interest}
+psg = ps %>% tax_glom('Species') %>% microbiome::transform('compositional') %>% 
+  psmelt() %>% 
+  filter(Species %in% df_ind_s_grp$Species) %>% 
+  left_join(df_ind_s_grp %>% select(Species,Indicator) %>% unique) %>% 
+  filter(Day =='Day 28') %>% 
+  left_join(maas %>% filter(Level=='Species') %>% select(Species,coef,qval)) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"* ",
+                      ifelse(qval>0.001,'**',ifelse(qval>0.0001,'***','****'))))) %>% 
+  mutate(Species = str_wrap(Species,25))
+
+# LM-ASSOCIATED ~~~~~~~~~~~~~~~~~~~~~
+
+# Set order for indicators
+order = psg %>% filter(Diet=='LM',Indicator=='LM Day 28') %>% 
+  group_by(Species) %>% summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+# cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = psg %>% group_by(Species) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Species = factor(Species, levels = order$Species)) %>% 
+  filter(!is.na(Species))
+max_pos = max_per_path %>% 
+  arrange(Species) %>% mutate(N = c(1:nrow(.))+0.25) %>% 
+  mutate(M_same = max(.$M))
+
+p1 = psg %>% filter(Indicator == 'LM Day 28') %>% droplevels() %>% 
+  mutate(Species = factor(Species,levels = order$Species)) %>% 
+  left_join(max_pos) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Species, Abundance, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(jitter.height=0,jitter.width = 0.2)) +
+  theme_classic(base_size = 16) +
+  ylab('Relative Abundance') +
+  xlab(NULL) +
+  geom_text(aes(x=N,y=M_same,label=symb), size = 7,lineheight=0.8,hjust=2) +
+  scale_y_log10(expand = expansion(mult = c(0.1, 0.1))) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+# CON-ASSOCIATED ~~~~~~~~~~~~~~~~~~~~~
+
+# Set order for indicators
+order = psg %>% filter(Diet=='CON',Indicator=='CON Day 28') %>% 
+  group_by(Species) %>% summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+# cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = psg %>% group_by(Species) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Species = factor(Species, levels = order$Species)) %>% 
+  filter(!is.na(Species))
+max_pos = max_per_path %>% 
+  arrange(Species) %>% mutate(N = c(1:nrow(.))+0.25) %>% 
+  mutate(M_same = max(.$M))
+
+p2 = psg %>% filter(Indicator == 'CON Day 28') %>% droplevels() %>% 
+  mutate(Species = factor(Species,levels = order$Species)) %>% 
+  left_join(max_pos) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Species, Abundance, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(jitter.height=0,jitter.width = 0.2)) +
+  theme_classic(base_size = 16) +
+  ylab('Relative Abundance') +
+  xlab(NULL) +
+  geom_text(aes(x=N,y=M_same,label=symb), size = 7,lineheight=0.8,hjust=1) +
+  scale_y_log10(expand = expansion(mult = c(0.1, 0.1))) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+p = ggarrange(plotlist = list(p2,p1),common.legend = T,legend = 'right', widths = c(3,5))
+p
+ggsave('Plots/Fungome/P2_all_d28_indicator_species_fungome_depletedin1.jpeg',height = 6, width = 10.5)
+```
+
+```{r}
+# psg = ps %>% tax_glom('Species') %>% microbiome::transform('compositional') %>% 
+#   psmelt() %>% 
+#   filter(Species %in% df_ind_s_grp$Species) %>% 
+#   left_join(df_ind_s_grp %>% select(Species,Indicator) %>% unique) %>% 
+#   filter(Day =='Day 28') %>% 
+#   mutate(Species = str_wrap(Species,25))
+# 
+# order = psg %>% filter(Diet=='CON',Indicator=='LM Day 28') %>% 
+#   group_by(Species) %>% summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+#   arrange(-Abundance)
+# 
+# p1 = psg %>% filter(Indicator=='LM Day 28') %>%
+#   mutate(Species = factor(Species,levels = c(psg$Species[psg$Indicator=='CON Day 28'] %>% unique,order$Species))) %>% 
+#   ggplot(aes(Species, Abundance, fill = Group)) +
+#   geom_boxplot(outlier.shape = NA) +
+#   geom_point(position=position_jitterdodge(jitter.height=0,jitter.width = 0.2)) +
+#   theme_classic(base_size = 16) +
+#   ggpubr::stat_compare_means(aes(group=Group),size=7, label = 'p.signif',hide.ns = T)+
+#   ylab(NULL) +
+#   xlab(NULL) +
+#   scale_y_continuous(expand = expansion(mult = c(0.1, 0.15))) +
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+# p2 = psg %>% filter(Indicator=='CON Day 28') %>%
+#   mutate(Species = factor(Species,levels = c(psg$Species[psg$Indicator=='CON Day 28'] %>% unique,order$Species))) %>% 
+#   ggplot(aes(Species, Abundance, fill = Group)) +
+#   geom_boxplot(outlier.shape = NA) +
+#   geom_point(position=position_jitterdodge(jitter.height=0,jitter.width = 0.2)) +
+#   theme_classic(base_size = 16) +
+#   ggpubr::stat_compare_means(aes(group=Group),size=7, label = 'p.signif',hide.ns = T)+
+#   ylab('Relative Abundance') +
+#   xlab(NULL) +
+#   scale_y_continuous(expand = expansion(mult = c(0.1, 0.15))) +
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+# p
+# p = ggarrange(plotlist = list(p2,p1),common.legend = T,legend = 'right', widths = c(3.5,5))
+# ggsave('Plots/Fungome/P2_all_species_fungome_depletedin1.jpeg',height = 6, width = 9.5)
+```
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```{r Plot Candida}
+my_comparisons <- list( c("CON Day 0", "LM Day 0"), 
+                        c("CON Day 0", "CON Day 28"),
+                        c("LM Day 0", "LM Day 28"), 
+                        c("LM Day 28", "CON Day 28") )
+
+# Genus
+temp = ps %>% tax_glom('Genus') %>% microbiome::transform('compositional') %>% 
+  psmelt() %>% 
+  filter(Genus=='Candida') %>% 
+  ggplot(aes(Group, Abundance, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(height = 0, width = 0.2) +
+  theme_classic(base_size = 16) +
+  ggpubr::stat_compare_means(comparisons = my_comparisons,size=5)+
+  ylab('Candida (Rel Ab.)') +
+  xlab(NULL) +
+  theme(legend.position = 'none')
+ggsave('Plots/Fungome/P3_g__Candida_fungome.jpeg',height = 5, width = 6)
+
+# Species
+temp = ps %>% tax_glom('Species') %>% microbiome::transform('compositional') %>% 
+  subset_taxa(Genus == 'Candida') %>% 
+  psmelt() %>% 
+  ggplot(aes(Group, Abundance, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(height = 0, width = 0.2) +
+  theme_classic(base_size = 16) +
+  ggpubr::stat_compare_means(comparisons = my_comparisons,size=5)+
+  ylab('Relative Abundance') +
+  xlab(NULL) +
+  theme(legend.position = 'none') + facet_wrap('Species',nrow=1)
+ggsave('Plots/Fungome/P3_g__Candida_species_fungome.jpeg',height = 5, width = 14)
+```
+

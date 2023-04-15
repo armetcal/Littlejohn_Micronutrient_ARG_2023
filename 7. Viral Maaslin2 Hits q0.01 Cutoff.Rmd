@@ -1,0 +1,185 @@
+---
+title: "3. Pathobiont Analysis"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r Load}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+
+# ps output is bacterial, raw counts
+source('0. Initialize Viral Data.R')
+```
+
+# Genus
+
+```{r}
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Virome/Maaslin2_longitudinal_viruses.xlsx',sheet='Genus') %>% filter(qval<0.01)
+
+ps.rel = ps %>% tax_glom('Genus') %>% microbiome::transform('compositional') %>% 
+  subset_taxa(Genus %in% maas$Genus) %>% psmelt() %>% 
+  filter(Day=='Day 28') %>% 
+  left_join(maas %>% select(Genus,coef,qval)) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+```
+
+```{r Boxplots of Fungi}
+# Set order
+order = ps.rel %>% filter(Diet=='LM') %>% 
+  group_by(Genus) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = ps.rel %>% group_by(Genus) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Genus = factor(Genus, levels = order$Genus))
+max_pos = max_per_path %>%
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef>0]) %>% droplevels() %>% 
+  arrange(Genus) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Positive assoc
+temp = ps.rel %>% mutate(Genus = factor(Genus, levels = order$Genus)) %>% 
+  left_join(max_pos) %>% 
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef>0]) %>% droplevels() %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Genus, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10() +
+  ggtitle('Virome: q<0.01, MaAsLin2')
+ggsave('Plots/Virome/P3_genus_q0.01_pos_virome.png', height = 5, width =7)
+
+#~~~~~~~~~~~~~~~~~~~~~~~
+
+# Set order
+order = ps.rel %>% filter(Diet=='CON') %>% 
+  group_by(Genus) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = ps.rel %>% group_by(Genus) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Genus = factor(Genus, levels = order$Genus))
+max_neg = max_per_path %>%
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef<0]) %>% droplevels() %>% 
+  arrange(Genus) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Negative assoc
+temp2 = ps.rel %>% mutate(Genus = factor(Genus, levels = order$Genus)) %>% 
+  left_join(max_neg) %>% 
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef<0]) %>% droplevels() %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Genus, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10() +
+  ggtitle('Virome: q<0.01, MaAsLin2')
+ggsave('Plots/Virome/P3_genus_q0.01_neg_virome.png', height = 5, width =5)
+```
+
+```{r Combined Figure}
+g = ggarrange(plotlist = list(temp,temp2) %>% lapply(function(x)x + ggtitle(NULL)),ncol=2,widths = c(6.5,4.5),common.legend = T,legend = 'right')
+ggsave('Plots/Virome/P3_genus_maaslin2_q0.01_combined_virome.jpeg', height = 5, width =10)
+```
+
+# Family
+
+```{r}
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Virome/Maaslin2_longitudinal_viruses.xlsx',sheet='Family') %>% filter(qval<0.01)
+
+ps.rel = ps %>% tax_glom('Family') %>% microbiome::transform('compositional') %>% 
+  subset_taxa(Family %in% maas$Family) %>% psmelt() %>% 
+  filter(Day=='Day 28') %>% 
+  left_join(maas %>% select(Family,coef,qval)) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+```
+
+```{r Boxplots of Fungi}
+# Set order
+order = ps.rel %>% filter(Diet=='LM') %>% 
+  group_by(Family) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = ps.rel %>% group_by(Family) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Family = factor(Family, levels = order$Family))
+max_pos = max_per_path %>%
+  filter(Family %in% ps.rel$Family[ps.rel$coef>0]) %>% droplevels() %>% 
+  arrange(Family) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Positive assoc
+temp = ps.rel %>% mutate(Family = factor(Family, levels = order$Family)) %>% 
+  left_join(max_pos) %>% 
+  filter(Family %in% ps.rel$Family[ps.rel$coef>0]) %>% droplevels() %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Family, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10() +
+  ggtitle('Virome: q<0.01, MaAsLin2')
+ggsave('Plots/Virome/P3_family_q0.01_pos_virome.png', height = 5, width =7)
+
+#~~~~~~~~~~~~~~~~~~~~~~~
+
+# Set order
+order = ps.rel %>% filter(Diet=='CON') %>% 
+  group_by(Family) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = ps.rel %>% group_by(Family) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Family = factor(Family, levels = order$Family))
+max_neg = max_per_path %>%
+  filter(Family %in% ps.rel$Family[ps.rel$coef<0]) %>% droplevels() %>% 
+  arrange(Family) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Negative assoc
+temp2 = ps.rel %>% mutate(Family = factor(Family, levels = order$Family)) %>% 
+  left_join(max_neg) %>% 
+  filter(Family %in% ps.rel$Family[ps.rel$coef<0]) %>% droplevels() %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Family, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10() +
+  ggtitle('Virome: q<0.01, MaAsLin2')
+ggsave('Plots/Virome/P3_family_q0.01_neg_virome.png', height = 5, width =5)
+```
+
+```{r Combined Figure}
+g = ggarrange(plotlist = list(temp,temp2) %>% lapply(function(x)x + ggtitle(NULL)),ncol=2,widths = c(6.5,4.5),common.legend = T,legend = 'right')
+ggsave('Plots/Virome/P3_family_maaslin2_q0.01_combined_virome.jpeg', height = 5, width =10)
+```
