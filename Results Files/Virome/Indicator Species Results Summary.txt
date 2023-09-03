@@ -1,0 +1,60 @@
+
+ Multilevel pattern analysis
+ ---------------------------
+
+ Association function: IndVal.g
+ Significance level (alpha): 0.05
+
+ Total number of species: 42
+ Selected number of species: 27 
+ Number of species associated to 1 group: 16 
+ Number of species associated to 2 groups: 11 
+
+ List of species associated to each combination: 
+
+ Group CON Day 28  #sps.  2 
+                                                      stat p.value  
+Cepunavirus Streptococcus virus Cp7                  0.789   0.012 *
+Chlorovirus Paramecium bursaria Chlorella virus NY2A 0.673   0.018 *
+
+ Group Day 0  #sps.  9 
+                                          stat p.value    
+Pandoravirus dulcis                      0.925   0.001 ***
+Asfivirus African swine fever virus      0.866   0.001 ***
+Igirivirus Synechococcus virus STIP37    0.828   0.001 ***
+Orpheovirus IHUMI-LCC2                   0.825   0.003 ** 
+Edwardsiella phage PEi20                 0.818   0.009 ** 
+Tequatrovirus Shigella virus Pss1        0.794   0.001 ***
+Chakrabartyvirus Pseudomonas virus pf16  0.735   0.008 ** 
+Pandoravirus quercus                     0.725   0.005 ** 
+Bracovirus Cotesia congregata bracovirus 0.716   0.006 ** 
+
+ Group LM Day 28  #sps.  5 
+                                                           stat p.value    
+Kayvirus Staphylococcus virus G1                          0.978   0.001 ***
+Acinetobacter phage phiAC-1                               0.957   0.001 ***
+Gordonia phage GTE8                                       0.883   0.001 ***
+Deltaentomopoxvirus Melanoplus sanguinipes entomopoxvirus 0.855   0.001 ***
+Bacillus phage vB_BboS-125                                0.849   0.001 ***
+
+ Group CON Day 28+Day 0  #sps.  5 
+                                                         stat p.value    
+Alteromonas phage vB_AmeM_PT11-V22                      0.970   0.001 ***
+Alphabaculovirus Spodoptera litura nucleopolyhedrovirus 0.961   0.001 ***
+Oryzopoxvirus Cotia virus                               0.859   0.007 ** 
+Eponavirus Faecalibacterium virus Epona                 0.856   0.002 ** 
+Rosemountvirus Salmonella phage SE13                    0.658   0.044 *  
+
+ Group CON Day 28+LM Day 28  #sps.  3 
+                              stat p.value    
+Shanbavirus A                0.924   0.001 ***
+Lactobacillus prophage Lj771 0.810   0.018 *  
+Lactobacillus phage phiadh   0.698   0.008 ** 
+
+ Group Day 0+LM Day 28  #sps.  3 
+                                                  stat p.value    
+Mimivirus Megavirus chiliensis                   0.902   0.001 ***
+Centapoxvirus Murmansk microtuspox virus         0.730   0.015 *  
+Betaentomopoxvirus Amsacta moorei entomopoxvirus 0.707   0.015 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 

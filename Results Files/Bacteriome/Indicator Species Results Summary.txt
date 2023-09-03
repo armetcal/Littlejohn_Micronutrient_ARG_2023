@@ -1,0 +1,116 @@
+
+ Multilevel pattern analysis
+ ---------------------------
+
+ Association function: IndVal.g
+ Significance level (alpha): 0.05
+
+ Total number of species: 933
+ Selected number of species: 83 
+ Number of species associated to 1 group: 15 
+ Number of species associated to 2 groups: 68 
+
+ List of species associated to each combination: 
+
+ Group CON Day 28  #sps.  1 
+                           stat p.value   
+Corynebacterium stationis 0.994   0.003 **
+
+ Group Day 0  #sps.  9 
+                                         stat p.value    
+Comamonas aquatica                      0.982   0.001 ***
+Candidatus Arthromitus sp. SFB-mouse    0.975   0.001 ***
+Bacillus sp. 1NLA3E                     0.957   0.001 ***
+Chryseobacterium sp. NEB161             0.955   0.001 ***
+Pseudoalteromonas spongiae              0.954   0.001 ***
+Kaistella jeonii                        0.951   0.002 ** 
+Candidatus Arthromitus sp. SFB-mouse-NL 0.949   0.001 ***
+Candidatus Syntrophocurvum alkaliphilum 0.947   0.001 ***
+Acinetobacter equi                      0.938   0.001 ***
+
+ Group LM Day 28  #sps.  5 
+                                                  stat p.value    
+Klebsiella sp. P1CD1                             0.995   0.001 ***
+Klebsiella quasivariicola                        0.995   0.001 ***
+Klebsiella sp. BDA134-6                          0.992   0.001 ***
+Klebsiella grimontii                             0.989   0.001 ***
+Enterobacter cloacae complex sp. FDA-CDC-AR_0164 0.905   0.001 ***
+
+ Group CON Day 28+Day 0  #sps.  36 
+                                                  stat p.value    
+Roseimaritima ulvae                              0.996   0.001 ***
+Staphylococcus simulans                          0.995   0.001 ***
+Granulicella mallensis                           0.995   0.001 ***
+Mucilaginibacter ginsenosidivorans               0.994   0.001 ***
+Geobacillus stearothermophilus                   0.993   0.001 ***
+Gluconobacter oxydans                            0.993   0.001 ***
+Hymenobacter sp. DG01                            0.990   0.001 ***
+Calothrix brevissima                             0.990   0.001 ***
+Shewanella baltica                               0.989   0.001 ***
+Acinetobacter radioresistens                     0.988   0.001 ***
+Epilithonimonas vandammei                        0.987   0.001 ***
+Duncaniella sp. C9                               0.986   0.001 ***
+Hypericibacter terrae                            0.985   0.001 ***
+Chryseobacterium carnipullorum                   0.985   0.001 ***
+Hymenobacter sp. PAMC 26628                      0.984   0.001 ***
+Sulfurimonas sp. S2-6                            0.981   0.001 ***
+Pseudodesulfovibrio mercurii                     0.981   0.001 ***
+Flavobacterium sediminis                         0.980   0.001 ***
+Aquiflexum balticum                              0.980   0.001 ***
+Streptomyces ficellus                            0.977   0.001 ***
+Kroppenstedtia pulmonis                          0.976   0.001 ***
+Gimesia maris                                    0.975   0.001 ***
+Geobacter sp. SVR                                0.975   0.001 ***
+Oceanobacillus zhaokaii                          0.971   0.002 ** 
+Megamonas hypermegale                            0.969   0.001 ***
+Lentibacillus amyloliquefaciens                  0.966   0.001 ***
+Alcaligenes faecalis                             0.964   0.001 ***
+Bacillus mycoides                                0.961   0.001 ***
+Actibacterium Confluentimicrobium sp. EMB200-NS6 0.957   0.001 ***
+Chlorobaculum limnaeum                           0.955   0.001 ***
+Bacillus beveridgei                              0.953   0.001 ***
+Mycobacterium conspicuum                         0.952   0.008 ** 
+Carboxydothermus hydrogenoformans                0.949   0.001 ***
+Bacillus safensis                                0.948   0.002 ** 
+Halobacteroides halobius                         0.941   0.001 ***
+Thermoanaerobacterium xylanolyticum              0.940   0.001 ***
+
+ Group CON Day 28+LM Day 28  #sps.  1 
+                     stat p.value    
+Klebsiella africana 0.995   0.001 ***
+
+ Group Day 0+LM Day 28  #sps.  31 
+                                        stat p.value    
+Enterococcus gallinarum                1.000   0.001 ***
+Enterococcus sp. M190262               0.999   0.001 ***
+Enterobacter oligotrophicus            0.997   0.001 ***
+Enterobacter asburiae                  0.996   0.001 ***
+Enterobacter chengduensis              0.996   0.001 ***
+Enterobacter roggenkampii              0.996   0.001 ***
+Blautia sp. YL58                       0.995   0.001 ***
+Aureitalea sp. RR4-38                  0.993   0.001 ***
+Gimesia chilikensis                    0.991   0.001 ***
+Enterobacter kobei                     0.989   0.001 ***
+Pseudoleptotrichia goodfellowii        0.988   0.001 ***
+Desulfopila sp. IMCC35005              0.984   0.001 ***
+Chitinophaga caeni                     0.982   0.001 ***
+Enterobacter bugandensis               0.981   0.001 ***
+Hyphobacterium sp. CCMP332             0.981   0.001 ***
+Enterobacter cloacae complex sp.       0.980   0.001 ***
+Veillonella atypica                    0.980   0.001 ***
+Streptobacillus moniliformis           0.979   0.001 ***
+Candidatus Arthromitus sp. SFB-rat-Yit 0.977   0.009 ** 
+Bacillus cellulosilyticus              0.977   0.001 ***
+Roseivirga pacifica                    0.969   0.002 ** 
+Listeria weihenstephanensis            0.968   0.001 ***
+Halomonas meridiana                    0.966   0.002 ** 
+Gimesia panareensis                    0.965   0.001 ***
+Thermoactinomyces vulgaris             0.964   0.001 ***
+Bacillus sp. THAF10                    0.962   0.001 ***
+Cylindrospermum stagnale               0.958   0.002 ** 
+Selenomonas sp. oral taxon 136         0.951   0.001 ***
+Enterobacter sp. LU1                   0.930   0.002 ** 
+Moorea producens                       0.927   0.002 ** 
+Enterobacter sp. YSU                   0.893   0.005 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 

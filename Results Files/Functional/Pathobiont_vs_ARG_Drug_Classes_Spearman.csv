@@ -1,0 +1,571 @@
+"Drug_Class","Pathobiont","cat","statistic","p.value","estimate","qval","Group","label.lm","label.con"
+"Peptide Antibiotic","Campylobacter","Up",193.72281323269,0.630536075556976,-0.174077655955698,0.873494892371295,"CON",NA,"CON: ρ=-0.17, q=0.87"
+"Peptide Antibiotic","Enterococcus","Up",174.574271077563,0.873494892371295,-0.058025885318566,0.873494892371295,"CON",NA,"CON: ρ=-0.06, q=0.87"
+"Peptide Antibiotic","Escherichia","Up",155.425728922437,0.873494892371295,0.058025885318566,0.873494892371295,"CON",NA,"CON: ρ=0.06, q=0.87"
+"Peptide Antibiotic","Haemophilus","Up",136.27718676731,0.630536075556976,0.174077655955698,0.873494892371295,"CON",NA,"CON: ρ=0.17, q=0.87"
+"Peptide Antibiotic","Klebsiella","Up",193.72281323269,0.630536075556976,-0.174077655955698,0.873494892371295,"CON",NA,"CON: ρ=-0.17, q=0.87"
+"Peptide Antibiotic","Phocaeicola vulgatus","Up",232.019897542944,0.244128681896491,-0.406181197229962,0.873494892371295,"CON",NA,"CON: ρ=-0.41, q=0.87"
+"Peptide Antibiotic","Prevotella copri","Down",155.425728922437,0.873494892371295,0.058025885318566,0.873494892371295,"CON",NA,"CON: ρ=0.06, q=0.87"
+"Peptide Antibiotic","Shigella","Up",183.333333333333,0.759922968348739,-0.111111111111111,0.873494892371295,"CON",NA,"CON: ρ=-0.11, q=0.87"
+"Peptide Antibiotic","Staphylococcus","Down",174.574271077563,0.873494892371295,-0.058025885318566,0.873494892371295,"CON",NA,"CON: ρ=-0.06, q=0.87"
+"Peptide Antibiotic","Streptococcus","Down",78.8315603019296,0.121502918817113,0.522232967867094,0.873494892371295,"CON",NA,"CON: ρ=0.52, q=0.87"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Campylobacter","Up",212.871355387817,0.416120253507059,-0.29012942659283,0.832240507014118,"CON",NA,"CON: ρ=-0.29, q=0.83"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Enterococcus","Up",193.72281323269,0.630536075556976,-0.174077655955698,0.873494892371295,"CON",NA,"CON: ρ=-0.17, q=0.87"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Escherichia","Up",251.16843969807,0.121502918817113,-0.522232967867094,0.607514594085567,"CON",NA,"CON: ρ=-0.52, q=0.61"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Haemophilus","Up",232.019897542944,0.244128681896491,-0.406181197229962,0.610321704741228,"CON",NA,"CON: ρ=-0.41, q=0.61"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Klebsiella","Up",155.425728922437,0.873494892371295,0.058025885318566,0.873494892371295,"CON",NA,"CON: ρ=0.06, q=0.87"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Phocaeicola vulgatus","Up",251.16843969807,0.121502918817113,-0.522232967867094,0.607514594085567,"CON",NA,"CON: ρ=-0.52, q=0.61"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Prevotella copri","Down",193.72281323269,0.630536075556976,-0.174077655955698,0.873494892371295,"CON",NA,"CON: ρ=-0.17, q=0.87"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Shigella","Up",183.333333333333,0.759922968348739,-0.111111111111111,0.873494892371295,"CON",NA,"CON: ρ=-0.11, q=0.87"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Staphylococcus","Down",232.019897542944,0.244128681896491,-0.406181197229962,0.610321704741228,"CON",NA,"CON: ρ=-0.41, q=0.61"
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Streptococcus","Down",174.574271077563,0.873494892371295,-0.058025885318566,0.873494892371295,"CON",NA,"CON: ρ=-0.06, q=0.87"
+"Disinfecting Agents And
+Antiseptics","Campylobacter","Up",129.319845929489,0.548473517210847,0.216243358003098,0.807909129276893,"CON",NA,"CON: ρ=0.22, q=0.81"
+"Disinfecting Agents And
+Antiseptics","Enterococcus","Up",67.8023389113662,0.0731457105413945,0.589076733870508,0.243819035137982,"CON",NA,"CON: ρ=0.59, q=0.24"
+"Disinfecting Agents And
+Antiseptics","Escherichia","Up",151.466148456013,0.821776220597893,0.0820233426908302,0.821776220597893,"CON",NA,"CON: ρ=0.08, q=0.82"
+"Disinfecting Agents And
+Antiseptics","Haemophilus","Up",82.5665405957156,0.141485745645218,0.49959672366233,0.353714364113045,"CON",NA,"CON: ρ=0.5, q=0.35"
+"Disinfecting Agents And
+Antiseptics","Klebsiella","Up",144.084047613838,0.727118216349204,0.126763347794919,0.807909129276893,"CON",NA,"CON: ρ=0.13, q=0.81"
+"Disinfecting Agents And
+Antiseptics","Phocaeicola vulgatus","Up",57.9595377884666,0.0424358375697084,0.648730074009294,0.225629677234036,"CON",NA,"CON: ρ=0.65, q=0.23"
+"Disinfecting Agents And
+Antiseptics","Prevotella copri","Down",240.05135856211,0.186564948699821,-0.45485671855824,0.373129897399643,"CON",NA,"CON: ρ=-0.45, q=0.37"
+"Disinfecting Agents And
+Antiseptics","Shigella","Up",58.9826481226655,0.0451259354468072,0.642529405317179,0.225629677234036,"CON",NA,"CON: ρ=0.64, q=0.23"
+"Disinfecting Agents And
+Antiseptics","Staphylococcus","Down",139.162647052388,0.665735731112808,0.156590017864312,0.807909129276893,"CON",NA,"CON: ρ=0.16, q=0.81"
+"Disinfecting Agents And
+Antiseptics","Streptococcus","Down",139.162647052388,0.665735731112808,0.156590017864312,0.807909129276893,"CON",NA,"CON: ρ=0.16, q=0.81"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Campylobacter","Up",117.128644612183,0.41612025350706,0.29012942659283,0.594457505010085,"CON",NA,"CON: ρ=0.29, q=0.59"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Enterococcus","Up",232.019897542944,0.244128681896491,-0.406181197229962,0.594457505010085,"CON",NA,"CON: ρ=-0.41, q=0.59"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Escherichia","Up",117.128644612183,0.41612025350706,0.29012942659283,0.594457505010085,"CON",NA,"CON: ρ=0.29, q=0.59"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Haemophilus","Up",193.72281323269,0.630536075556976,-0.174077655955698,0.700595639507752,"CON",NA,"CON: ρ=-0.17, q=0.7"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Klebsiella","Up",232.019897542944,0.244128681896491,-0.406181197229962,0.594457505010085,"CON",NA,"CON: ρ=-0.41, q=0.59"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Phocaeicola vulgatus","Up",212.871355387817,0.416120253507059,-0.29012942659283,0.594457505010085,"CON",NA,"CON: ρ=-0.29, q=0.59"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Prevotella copri","Down",97.9801024570563,0.244128681896491,0.406181197229962,0.594457505010085,"CON",NA,"CON: ρ=0.41, q=0.59"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Shigella","Up",183.333333333333,0.759922968348739,-0.111111111111111,0.759922968348739,"CON",NA,"CON: ρ=-0.11, q=0.76"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Staphylococcus","Down",193.72281323269,0.630536075556976,-0.174077655955698,0.700595639507752,"CON",NA,"CON: ρ=-0.17, q=0.7"
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Streptococcus","Down",117.128644612183,0.41612025350706,0.29012942659283,0.594457505010085,"CON",NA,"CON: ρ=0.29, q=0.59"
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Campylobacter","Up",272,0.0490426316833764,-0.648484848484848,0.132938274979033,"LM","LM: ρ=-0.65, q=0.13",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Enterococcus","Up",64,0.0664691374895167,0.612121212121212,0.132938274979033,"LM","LM: ρ=0.61, q=0.13",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Escherichia","Up",64,0.0664691374895167,0.612121212121212,0.132938274979033,"LM","LM: ρ=0.61, q=0.13",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Haemophilus","Up",202,0.536688086753551,-0.224242424242424,0.766697266790787,"LM","LM: ρ=-0.22, q=0.77",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Klebsiella","Up",16,0.000880224994754143,0.903030303030303,0.00880224994754143,"LM","LM: ρ=0.9, q=0.0088",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Phocaeicola vulgatus","Up",160,0.94570980835199,0.0303030303030303,0.94570980835199,"LM","LM: ρ=0.03, q=0.95",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Prevotella copri","Down",114,0.387054968154447,0.309090909090909,0.645091613590745,"LM","LM: ρ=0.31, q=0.65",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Shigella","Up",42,0.0184138413143277,0.745454545454545,0.0920692065716384,"LM","LM: ρ=0.75, q=0.092",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Staphylococcus","Down",148,0.785018103976205,0.103030303030303,0.90157439228533,"LM","LM: ρ=0.1, q=0.9",NA
+"Diaminopyrimidine
+Antibiotic;Fluoroquinolone
+Antibiotic;Glycylcycline;Nitrofuran
+Antibiotic;Tetracycline
+Antibiotic","Streptococcus","Down",150,0.811416953056797,0.0909090909090909,0.90157439228533,"LM","LM: ρ=0.09, q=0.9",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Campylobacter","Up",282,0.0275141191111855,-0.709090909090909,0.137570595555927,"LM","LM: ρ=-0.71, q=0.14",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Enterococcus","Up",92,0.204200583289326,0.442424242424242,0.408401166578652,"LM","LM: ρ=0.44, q=0.41",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Escherichia","Up",88,0.178219329270541,0.466666666666667,0.408401166578652,"LM","LM: ρ=0.47, q=0.41",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Haemophilus","Up",212,0.427359698875701,-0.284848484848485,0.712266164792835,"LM","LM: ρ=-0.28, q=0.71",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Klebsiella","Up",32,0.00823557082285116,0.806060606060606,0.0823557082285116,"LM","LM: ρ=0.81, q=0.082",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Phocaeicola vulgatus","Up",174,0.891638843953117,-0.0545454545454545,0.891638843953117,"LM","LM: ρ=-0.05, q=0.89",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Prevotella copri","Down",196,0.607566897460635,-0.187878787878788,0.86795271065805,"LM","LM: ρ=-0.19, q=0.87",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Shigella","Up",74,0.10429776397167,0.551515151515151,0.347659213238899,"LM","LM: ρ=0.55, q=0.35",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Staphylococcus","Down",186,0.732886836413125,-0.127272727272727,0.891638843953117,"LM","LM: ρ=-0.13, q=0.89",NA
+"Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam","Streptococcus","Down",152,0.83800409458326,0.0787878787878788,0.891638843953117,"LM","LM: ρ=0.08, q=0.89",NA
+"Peptide Antibiotic","Campylobacter","Up",208,0.469675250206491,-0.260606060606061,0.521861389118323,"LM","LM: ρ=-0.26, q=0.52",NA
+"Peptide Antibiotic","Enterococcus","Up",98,0.247370787611931,0.406060606060606,0.353386839445616,"LM","LM: ρ=0.41, q=0.35",NA
+"Peptide Antibiotic","Escherichia","Up",50,0.0311410954595681,0.696969696969697,0.103803651531894,"LM","LM: ρ=0.7, q=0.1",NA
+"Peptide Antibiotic","Haemophilus","Up",306,0.00350474436797717,-0.854545454545454,0.034055663859134,"LM","LM: ρ=-0.85, q=0.034",NA
+"Peptide Antibiotic","Klebsiella","Up",94,0.218028474590315,0.43030303030303,0.353386839445616,"LM","LM: ρ=0.43, q=0.35",NA
+"Peptide Antibiotic","Phocaeicola vulgatus","Up",30,0.0068111327718268,0.818181818181818,0.034055663859134,"LM","LM: ρ=0.82, q=0.034",NA
+"Peptide Antibiotic","Prevotella copri","Down",80,0.132823060175966,0.515151515151515,0.265646120351931,"LM","LM: ρ=0.52, q=0.27",NA
+"Peptide Antibiotic","Shigella","Up",64,0.0664691374895167,0.612121212121212,0.166172843723792,"LM","LM: ρ=0.61, q=0.17",NA
+"Peptide Antibiotic","Staphylococcus","Down",168,0.972841176143636,-0.0181818181818182,0.972841176143636,"LM","LM: ρ=-0.02, q=0.97",NA
+"Peptide Antibiotic","Streptococcus","Down",212,0.427359698875701,-0.284848484848485,0.521861389118323,"LM","LM: ρ=-0.28, q=0.52",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Campylobacter","Up",250,0.132823060175966,-0.515151515151515,0.442743533919885,"LM","LM: ρ=-0.52, q=0.44",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Enterococcus","Up",208,0.469675250206491,-0.260606060606061,0.61444437167823,"LM","LM: ρ=-0.26, q=0.61",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Escherichia","Up",110,0.348846243872153,0.333333333333333,0.581410406453589,"LM","LM: ρ=0.33, q=0.58",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Haemophilus","Up",228,0.278965216116317,-0.381818181818182,0.557930432232634,"LM","LM: ρ=-0.38, q=0.56",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Klebsiella","Up",58,0.0490426316833765,0.648484848484848,0.245213158416883,"LM","LM: ρ=0.65, q=0.25",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Phocaeicola vulgatus","Up",152,0.83800409458326,0.0787878787878788,0.931115660648067,"LM","LM: ρ=0.08, q=0.93",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Prevotella copri","Down",206,0.491555497342584,-0.248484848484848,0.61444437167823,"LM","LM: ρ=-0.25, q=0.61",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Shigella","Up",164,1,0.00606060606060606,1,"LM","LM: ρ=0.01, q=1",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Staphylococcus","Down",282,0.0275141191111855,-0.709090909090909,0.245213158416883,"LM","LM: ρ=-0.71, q=0.25",NA
+"Aminocoumarin
+Antibiotic;Carbapenem;Peptide
+Antibiotic;Rifamycin
+Antibiotic","Streptococcus","Down",236,0.218028474590315,-0.43030303030303,0.545071186475788,"LM","LM: ρ=-0.43, q=0.55",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Campylobacter","Up",290,0.0159208292880929,-0.757575757575757,0.0796041464404644,"LM","LM: ρ=-0.76, q=0.08",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Enterococcus","Up",90,0.190932019316111,0.454545454545455,0.381864038632223,"LM","LM: ρ=0.45, q=0.38",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Escherichia","Up",72,0.095791569143582,0.563636363636364,0.239478922858955,"LM","LM: ρ=0.56, q=0.24",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Haemophilus","Up",212,0.427359698875701,-0.284848484848485,0.712266164792835,"LM","LM: ρ=-0.28, q=0.71",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Klebsiella","Up",32,0.00823557082285116,0.806060606060606,0.0796041464404644,"LM","LM: ρ=0.81, q=0.08",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Phocaeicola vulgatus","Up",156,0.891638843953118,0.0545454545454545,0.972841176143636,"LM","LM: ρ=0.05, q=0.97",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Prevotella copri","Down",168,0.972841176143636,-0.0181818181818182,0.972841176143636,"LM","LM: ρ=-0.02, q=0.97",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Shigella","Up",58,0.0490426316833765,0.648484848484848,0.163475438944588,"LM","LM: ρ=0.65, q=0.16",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Staphylococcus","Down",176,0.864753528804526,-0.0666666666666667,0.972841176143636,"LM","LM: ρ=-0.07, q=0.97",NA
+"Carbapenem;Cephalosporin;Cephamycin;Monobactam;Penam;Penem","Streptococcus","Down",134,0.607566897460635,0.187878787878788,0.86795271065805,"LM","LM: ρ=0.19, q=0.87",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Campylobacter","Up",260,0.0877680432613641,-0.575757575757576,0.239478922858955,"LM","LM: ρ=-0.58, q=0.24",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Enterococcus","Up",92,0.204200583289326,0.442424242424242,0.408401166578652,"LM","LM: ρ=0.44, q=0.41",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Escherichia","Up",56,0.0440265528478427,0.660606060606061,0.220132764239214,"LM","LM: ρ=0.66, q=0.22",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Haemophilus","Up",224,0.312800267381167,-0.357575757575757,0.521333778968612,"LM","LM: ρ=-0.36, q=0.52",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Klebsiella","Up",40,0.0159208292880929,0.757575757575757,0.159208292880929,"LM","LM: ρ=0.76, q=0.16",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Phocaeicola vulgatus","Up",140,0.681807643477163,0.151515151515151,0.843147856100953,"LM","LM: ρ=0.15, q=0.84",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Prevotella copri","Down",118,0.427359698875701,0.284848484848485,0.610513855536716,"LM","LM: ρ=0.28, q=0.61",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Shigella","Up",72,0.095791569143582,0.563636363636364,0.239478922858955,"LM","LM: ρ=0.56, q=0.24",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Staphylococcus","Down",168,0.972841176143636,-0.0181818181818182,0.972841176143636,"LM","LM: ρ=-0.02, q=0.97",NA
+"Aminoglycoside
+Antibiotic;Cephalosporin;Disinfecting
+Agents And
+Antiseptics;Macrolide
+Antibiotic;Peptide
+Antibiotic;Rifamycin
+Antibiotic;Tetracycline
+Antibiotic","Streptococcus","Down",146,0.758833070490857,0.115151515151515,0.843147856100953,"LM","LM: ρ=0.12, q=0.84",NA
+"Phosphonic Acid Antibiotic","Campylobacter","Up",284,0.0241945875284697,-0.721212121212121,0.080648625094899,"LM","LM: ρ=-0.72, q=0.081",NA
+"Phosphonic Acid Antibiotic","Enterococcus","Up",128,0.536688086753551,0.224242424242424,0.607566897460635,"LM","LM: ρ=0.22, q=0.61",NA
+"Phosphonic Acid Antibiotic","Escherichia","Up",12,0.000130162394465275,0.927272727272727,0.00130162394465275,"LM","LM: ρ=0.93, q=0.0013",NA
+"Phosphonic Acid Antibiotic","Haemophilus","Up",264,0.0731198750392827,-0.6,0.146239750078565,"LM","LM: ρ=-0.6, q=0.15",NA
+"Phosphonic Acid Antibiotic","Klebsiella","Up",52,0.0350915379341639,0.684848484848485,0.0877288448354098,"LM","LM: ρ=0.68, q=0.088",NA
+"Phosphonic Acid Antibiotic","Phocaeicola vulgatus","Up",78,0.12280318761783,0.527272727272727,0.204671979363049,"LM","LM: ρ=0.53, q=0.2",NA
+"Phosphonic Acid Antibiotic","Prevotella copri","Down",134,0.607566897460635,0.187878787878788,0.607566897460635,"LM","LM: ρ=0.19, q=0.61",NA
+"Phosphonic Acid Antibiotic","Shigella","Up",42,0.0184138413143277,0.745454545454545,0.080648625094899,"LM","LM: ρ=0.75, q=0.081",NA
+"Phosphonic Acid Antibiotic","Staphylococcus","Down",198,0.58354058456642,-0.2,0.607566897460635,"LM","LM: ρ=-0.2, q=0.61",NA
+"Phosphonic Acid Antibiotic","Streptococcus","Down",220,0.348846243872153,-0.333333333333333,0.498351776960219,"LM","LM: ρ=-0.33, q=0.5",NA
+"Fluoroquinolone Antibiotic","Campylobacter","Up",257.280061530634,0.0927887674939956,-0.559273100185659,0.309295891646652,"LM","LM: ρ=-0.56, q=0.31",NA
+"Fluoroquinolone Antibiotic","Enterococcus","Up",119.863013381755,0.444399141468837,0.273557494656029,0.555498926836046,"LM","LM: ρ=0.27, q=0.56",NA
+"Fluoroquinolone Antibiotic","Escherichia","Up",72.7199384693662,0.0927887674939956,0.559273100185659,0.309295891646652,"LM","LM: ρ=0.56, q=0.31",NA
+"Fluoroquinolone Antibiotic","Haemophilus","Up",235.213090295047,0.22017919518736,-0.425533880576045,0.440358390374719,"LM","LM: ρ=-0.43, q=0.44",NA
+"Fluoroquinolone Antibiotic","Klebsiella","Up",84.7564682342315,0.154079965146636,0.486324434944052,0.385199912866591,"LM","LM: ρ=0.49, q=0.39",NA
+"Fluoroquinolone Antibiotic","Phocaeicola vulgatus","Up",104.817351175674,0.300066969464665,0.364743326208039,0.500111615774442,"LM","LM: ρ=0.36, q=0.5",NA
+"Fluoroquinolone Antibiotic","Prevotella copri","Down",118.859969234683,0.433925839676929,0.27963655009283,0.555498926836046,"LM","LM: ρ=0.28, q=0.56",NA
+"Fluoroquinolone Antibiotic","Shigella","Up",67.7047177340057,0.0727859369597628,0.589668377369663,0.309295891646652,"LM","LM: ρ=0.59, q=0.31",NA
+"Fluoroquinolone Antibiotic","Staphylococcus","Down",187.066971235586,0.712622223508989,-0.133739219609614,0.712622223508989,"LM","LM: ρ=-0.13, q=0.71",NA
+"Fluoroquinolone Antibiotic","Streptococcus","Down",191.079147823875,0.662762297244448,-0.158055441356817,0.712622223508989,"LM","LM: ρ=-0.16, q=0.71",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Campylobacter","Up",300,0.0068111327718268,-0.818181818181818,0.0227037759060893,"LM","LM: ρ=-0.82, q=0.023",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Enterococcus","Up",138,0.656721421523199,0.163636363636364,0.72969046835911,"LM","LM: ρ=0.16, q=0.73",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Escherichia","Up",20,0.0019770587107552,0.878787878787879,0.0175237218398858,"LM","LM: ρ=0.88, q=0.018",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Haemophilus","Up",236,0.218028474590315,-0.43030303030303,0.43605694918063,"LM","LM: ρ=-0.43, q=0.44",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Klebsiella","Up",24,0.00350474436797716,0.854545454545454,0.0175237218398858,"LM","LM: ρ=0.85, q=0.018",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Phocaeicola vulgatus","Up",132,0.583540584566421,0.2,0.729425730708026,"LM","LM: ρ=0.2, q=0.73",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Prevotella copri","Down",174,0.891638843953117,-0.0545454545454545,0.891638843953117,"LM","LM: ρ=-0.05, q=0.89",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Shigella","Up",50,0.0311410954595681,0.696969696969697,0.0778527386489204,"LM","LM: ρ=0.7, q=0.078",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Staphylococcus","Down",216,0.387054968154447,-0.309090909090909,0.645091613590745,"LM","LM: ρ=-0.31, q=0.65",NA
+"Aminoglycoside
+Antibiotic;Carbapenem;Cephalosporin;Fluoroquinolone
+Antibiotic;Macrolide
+Antibiotic;Penam;Penem;Peptide
+Antibiotic","Streptococcus","Down",200,0.559908079271241,-0.212121212121212,0.729425730708026,"LM","LM: ρ=-0.21, q=0.73",NA
+"Disinfecting Agents And
+Antiseptics","Campylobacter","Up",134.908675587837,0.614067751495504,0.182371663104019,0.767584689369379,"LM","LM: ρ=0.18, q=0.77",NA
+"Disinfecting Agents And
+Antiseptics","Enterococcus","Up",52.6590555279241,0.0302111706883683,0.680854208921672,0.147705047738121,"LM","LM: ρ=0.68, q=0.15",NA
+"Disinfecting Agents And
+Antiseptics","Escherichia","Up",131.89954314662,0.578406144649845,0.200608829414421,0.767584689369379,"LM","LM: ρ=0.2, q=0.77",NA
+"Disinfecting Agents And
+Antiseptics","Haemophilus","Up",182.051750500226,0.77633406024091,-0.103343942425611,0.828202479859412,"LM","LM: ρ=-0.1, q=0.83",NA
+"Disinfecting Agents And
+Antiseptics","Klebsiella","Up",151.960426088063,0.828202479859412,0.0790277206784084,0.828202479859412,"LM","LM: ρ=0.08, q=0.83",NA
+"Disinfecting Agents And
+Antiseptics","Phocaeicola vulgatus","Up",131.89954314662,0.578406144649845,0.200608829414421,0.767584689369379,"LM","LM: ρ=0.2, q=0.77",NA
+"Disinfecting Agents And
+Antiseptics","Prevotella copri","Down",48.6468789396356,0.0227377366153768,0.705170430668875,0.147705047738121,"LM","LM: ρ=0.71, q=0.15",NA
+"Disinfecting Agents And
+Antiseptics","Shigella","Up",78.7382033517988,0.121027394083801,0.522798767564856,0.302568485209502,"LM","LM: ρ=0.52, q=0.3",NA
+"Disinfecting Agents And
+Antiseptics","Staphylococcus","Down",58.6773204103567,0.0443115143214362,0.644379876300868,0.147705047738121,"LM","LM: ρ=0.64, q=0.15",NA
+"Disinfecting Agents And
+Antiseptics","Streptococcus","Down",95.7899538520247,0.227551510224215,0.419454825139245,0.455103020448431,"LM","LM: ρ=0.42, q=0.46",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Campylobacter","Up",66,0.0731198750392827,0.6,0.182799687598207,"LM","LM: ρ=0.6, q=0.18",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Enterococcus","Up",92,0.204200583289326,0.442424242424242,0.255250729111657,"LM","LM: ρ=0.44, q=0.26",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Escherichia","Up",274,0.0440265528478426,-0.660606060606061,0.146755176159475,"LM","LM: ρ=-0.66, q=0.15",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Haemophilus","Up",80,0.132823060175966,0.515151515151515,0.255250729111657,"LM","LM: ρ=0.52, q=0.26",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Klebsiella","Up",238,0.204200583289326,-0.442424242424242,0.255250729111657,"LM","LM: ρ=-0.44, q=0.26",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Phocaeicola vulgatus","Up",238,0.204200583289326,-0.442424242424242,0.255250729111657,"LM","LM: ρ=-0.44, q=0.26",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Prevotella copri","Down",150,0.811416953056797,0.0909090909090909,0.811416953056797,"LM","LM: ρ=0.09, q=0.81",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Shigella","Up",198,0.58354058456642,-0.2,0.648378427296023,"LM","LM: ρ=-0.2, q=0.65",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Staphylococcus","Down",44,0.0211664810722656,0.733333333333333,0.105832405361328,"LM","LM: ρ=0.73, q=0.11",NA
+"Lincosamide
+Antibiotic;Macrolide
+Antibiotic;Streptogramin
+A Antibiotic;Streptogramin
+B Antibiotic;Streptogramin
+Antibiotic","Streptococcus","Down",38,0.0136717821032753,0.76969696969697,0.105832405361328,"LM","LM: ρ=0.77, q=0.11",NA
+"Cephalosporin;Penam;Penem","Campylobacter","Up",110,0.348846243872153,0.333333333333333,0.552935668792067,"LM","LM: ρ=0.33, q=0.55",NA
+"Cephalosporin;Penam;Penem","Enterococcus","Up",132,0.583540584566421,0.2,0.648378427296023,"LM","LM: ρ=0.2, q=0.65",NA
+"Cephalosporin;Penam;Penem","Escherichia","Up",264,0.0731198750392827,-0.6,0.182799687598207,"LM","LM: ρ=-0.6, q=0.18",NA
+"Cephalosporin;Penam;Penem","Haemophilus","Up",24,0.00350474436797716,0.854545454545454,0.034055663859134,"LM","LM: ρ=0.85, q=0.034",NA
+"Cephalosporin;Penam;Penem","Klebsiella","Up",216,0.387054968154447,-0.309090909090909,0.552935668792067,"LM","LM: ρ=-0.31, q=0.55",NA
+"Cephalosporin;Penam;Penem","Phocaeicola vulgatus","Up",300,0.0068111327718268,-0.818181818181818,0.034055663859134,"LM","LM: ρ=-0.82, q=0.034",NA
+"Cephalosporin;Penam;Penem","Prevotella copri","Down",188,0.707203785571239,-0.139393939393939,0.707203785571239,"LM","LM: ρ=-0.14, q=0.71",NA
+"Cephalosporin;Penam;Penem","Shigella","Up",206,0.491555497342584,-0.248484848484848,0.61444437167823,"LM","LM: ρ=-0.25, q=0.61",NA
+"Cephalosporin;Penam;Penem","Staphylococcus","Down",74,0.10429776397167,0.551515151515151,0.208595527943339,"LM","LM: ρ=0.55, q=0.21",NA
+"Cephalosporin;Penam;Penem","Streptococcus","Down",56,0.0440265528478427,0.660606060606061,0.146755176159476,"LM","LM: ρ=0.66, q=0.15",NA
+"Penam;Penem","Campylobacter","Up",285.365297648653,0.016646879953377,-0.729486652416078,0.083234399766885,"LM","LM: ρ=-0.73, q=0.083",NA
+"Penam;Penem","Enterococcus","Up",109.832571911034,0.345036327992211,0.334348049024035,0.590466575515511,"LM","LM: ρ=0.33, q=0.59",NA
+"Penam;Penem","Escherichia","Up",60.6834087045009,0.0498460995096795,0.632221765427267,0.166153665032265,"LM","LM: ρ=0.63, q=0.17",NA
+"Penam;Penem","Haemophilus","Up",213.146119059461,0.413326602860858,-0.291794660966431,0.590466575515511,"LM","LM: ρ=-0.29, q=0.59",NA
+"Penam;Penem","Klebsiella","Up",36.6103491747704,0.00803313849599635,0.778119095910483,0.0803313849599635,"LM","LM: ρ=0.78, q=0.08",NA
+"Penam;Penem","Phocaeicola vulgatus","Up",146.945205352702,0.763482646374149,0.109422997862412,0.848314051526833,"LM","LM: ρ=0.11, q=0.85",NA
+"Penam;Penem","Prevotella copri","Down",167.006088294144,0.973408063507424,-0.0121581108736013,0.973408063507424,"LM","LM: ρ=-0.01, q=0.97",NA
+"Penam;Penem","Shigella","Up",69.7108060281499,0.0804125791027732,0.577510266496061,0.201031447756933,"LM","LM: ρ=0.58, q=0.2",NA
+"Penam;Penem","Staphylococcus","Down",187.066971235586,0.712622223508989,-0.133739219609614,0.848314051526833,"LM","LM: ρ=-0.13, q=0.85",NA
+"Penam;Penem","Streptococcus","Down",219.164383941894,0.354418327018325,-0.328268993587235,0.590466575515511,"LM","LM: ρ=-0.33, q=0.59",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Campylobacter","Up",216.629653475618,0.378689016672347,-0.312906990761323,0.631148361120579,"LM","LM: ρ=-0.31, q=0.63",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Enterococcus","Up",153.864192387612,0.853036803343083,0.0674897431053834,0.853036803343083,"LM","LM: ρ=0.07, q=0.85",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Escherichia","Up",64.7777314885057,0.0625281759674004,0.60740768794845,0.231716700510037,"LM","LM: ρ=0.61, q=0.23",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Haemophilus","Up",263.197576218333,0.0695150101530111,-0.595136825565653,0.231716700510037,"LM","LM: ρ=-0.6, q=0.23",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Klebsiella","Up",149.814807801289,0.80037764473834,0.0920314678709773,0.853036803343083,"LM","LM: ρ=0.09, q=0.85",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Phocaeicola vulgatus","Up",56.6789623158597,0.039223264750292,0.656491137479638,0.231716700510037,"LM","LM: ρ=0.66, q=0.23",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Prevotella copri","Down",123.493807990189,0.483246886873894,0.251552678847338,0.690352695534134,"LM","LM: ρ=0.25, q=0.69",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Shigella","Up",80.9752698337977,0.13274267581496,0.509240788886074,0.3318566895374,"LM","LM: ρ=0.51, q=0.33",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Staphylococcus","Down",188.283961371357,0.697385072445867,-0.141114917402165,0.853036803343083,"LM","LM: ρ=-0.14, q=0.85",NA
+"Carbapenem;Cephalosporin;Cephamycin;Penam","Streptococcus","Down",234.851884114072,0.222818104283032,-0.423344752206496,0.445636208566064,"LM","LM: ρ=-0.42, q=0.45",NA

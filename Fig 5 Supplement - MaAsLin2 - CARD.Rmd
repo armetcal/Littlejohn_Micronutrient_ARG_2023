@@ -1,0 +1,114 @@
+---
+title: "CARD Differential Abundance"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+library(vegan)
+library(Maaslin2)
+
+# Load data
+df = readxl::read_xlsx('Data Files/ARG_master.xlsx') %>% 
+  rename(MBI_ID = SampleID) %>% 
+  select(MBI_ID,ARO_Accession,Drug_Class,Resistance_Mechanism,Count)
+
+# Remove anything with zero hits
+temp = df %>% group_by(ARO_Accession) %>% summarize(Count = sum(Count)) %>% ungroup %>% 
+  filter(Count>0)
+df = df %>% filter(ARO_Accession %in% temp$ARO_Accession)
+
+# Abundance
+o = df %>% select(MBI_ID,ARO_Accession,Count) %>% 
+  pivot_wider(names_from = MBI_ID, values_from = Count) %>% 
+  mutate(ARO_Accession = paste0('X_',ARO_Accession)) %>% 
+  column_to_rownames('ARO_Accession') %>% as.matrix %>% 
+  otu_table(taxa_are_rows = T)
+
+# Taxonomy
+t = df %>% select(Resistance_Mechanism,Drug_Class,ARO_Accession) %>% unique() %>% 
+  mutate(ARO_Accession = paste0('X_',ARO_Accession)) %>% 
+  `rownames<-`(.$ARO_Accession) %>% as.matrix %>% tax_table()
+
+# Sample data
+s = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$MDB_ID) %>% 
+  mutate(Mouse = str_remove(Sample,'_D0') %>% str_remove('_D28'))
+
+# Phyloseq object
+ps = phyloseq(sample_data(s),o,t)
+ps@sam_data$Group = factor(ps@sam_data$Group, levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
+```
+
+# Run Maaslin2
+```{r}
+temp = ps %>% subset_samples(Day=='Day 28')
+# ARO Accession Level
+maas.sp = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 0,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'none',
+    transform = 'none',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+
+temp = ps %>% tax_glom('Drug_Class') %>% subset_samples(Day=='Day 28')
+# Drug_Class
+maas.drug = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 0,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'none',
+    transform = 'none',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+
+temp = ps %>% tax_glom('Resistance_Mechanism') %>% subset_samples(Day=='Day 28')
+# Resistance_Mechanism
+maas.mech = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 0,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'none',
+    transform = 'none',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+```
+
+```{r}
+res = maas.sp$results %>% mutate(Level = "ARO_Accession") %>%
+  rbind(maas.drug$results %>% mutate(Level = "Drug_Class")) %>%
+  rbind(maas.mech$results %>% mutate(Level = "Resistance_Mechanism"))
+
+sig = res %>% filter(qval<0.05)
+
+writexl::write_xlsx(list('ARO_Accession' = res %>% filter(Level=='ARO_Accession'),
+                         'Drug_Class' = res %>% filter(Level=='Drug_Class'),
+                         'Resistance_Mechanism' = res %>% filter(Level=='Resistance_Mechanism')),
+                    'Results Files/Functional/Fig. 5 Supplement - CARD Maaslin2.xlsx')
+```

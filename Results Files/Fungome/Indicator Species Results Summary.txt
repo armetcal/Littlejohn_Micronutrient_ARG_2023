@@ -1,0 +1,41 @@
+
+ Multilevel pattern analysis
+ ---------------------------
+
+ Association function: IndVal.g
+ Significance level (alpha): 0.05
+
+ Total number of species: 61
+ Selected number of species: 17 
+ Number of species associated to 1 group: 5 
+ Number of species associated to 2 groups: 12 
+
+ List of species associated to each combination: 
+
+ Group Day 0  #sps.  5 
+                          stat p.value    
+Ustilago maydis          0.939   0.001 ***
+Drechmeria coniospora    0.929   0.003 ** 
+Lachancea thermotolerans 0.915   0.001 ***
+Kazachstania naganishii  0.911   0.001 ***
+Encephalitozoon hellem   0.790   0.002 ** 
+
+ Group CON Day 28+Day 0  #sps.  7 
+                            stat p.value    
+Torulaspora delbrueckii    0.959   0.001 ***
+Kazachstania africana      0.932   0.001 ***
+Naumovozyma castellii      0.912   0.001 ***
+Eremothecium sinecaudum    0.903   0.003 ** 
+Brettanomyces nanus        0.872   0.001 ***
+Sugiyamaella lignohabitans 0.870   0.002 ** 
+Encephalitozoon romaleae   0.837   0.001 ***
+
+ Group Day 0+LM Day 28  #sps.  5 
+                          stat p.value    
+Aspergillus fumigatus    0.993   0.001 ***
+Fusarium venenatum       0.972   0.001 ***
+Zygosaccharomyces rouxii 0.941   0.004 ** 
+Fusarium fujikuroi       0.920   0.003 ** 
+Zygotorulaspora mrakii   0.885   0.001 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 

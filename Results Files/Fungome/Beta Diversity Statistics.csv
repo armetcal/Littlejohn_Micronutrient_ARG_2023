@@ -1,0 +1,5 @@
+"Beta Measure","Stat","Comparison","pval","p adj"
+"Bray-Curtis","Centroid Distances","CON D0 vs D28",0.001,0.004
+"Bray-Curtis","Centroid Distances","LM D0 vs D28",0.001,0.004
+"Bray-Curtis","Centroid Distances","D0 CON vs LM",0.717,0.717
+"Bray-Curtis","Centroid Distances","D28 CON vs LM",0.001,0.004
