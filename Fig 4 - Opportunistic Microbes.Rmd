@@ -1,5 +1,5 @@
 ---
-title: "Pathobiont Analysis"
+title: "Opportunistic Bacteria"
 author: "Avril Metcalfe-Roach"
 date: "`r Sys.Date()`"
 output: html_document
@@ -31,13 +31,13 @@ path.species = c('Phocaeicola vulgatus', 'Prevotella copri','Bacteroides fragili
 
 # Extract otu data into table
 g = ps.rel %>% subset_taxa(Genus %in% path.genus) %>% tax_glom('Genus') %>% 
-  psmelt() %>% rename(Pathobiont = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
+  psmelt() %>% rename(`Opportunistic\nBacteria`  = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
 sp = ps.rel %>% subset_taxa(Species %in% path.species) %>% tax_glom('Species') %>% 
-  psmelt() %>% rename(Pathobiont = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
+  psmelt() %>% rename(`Opportunistic\nBacteria`  = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
 
 maas2 = maas %>% filter((Level=='Genus' & Genus %in% path.genus) | (Level=='Species' & Species %in% path.species)) %>% 
-  mutate(Pathobiont = ifelse(is.na(Species),Genus,Species)) %>% 
-  select(Pathobiont, qval) %>% 
+  mutate(`Opportunistic\nBacteria`  = ifelse(is.na(Species),Genus,Species)) %>% 
+  select(`Opportunistic\nBacteria` , qval) %>% 
   mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
                       ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
 
@@ -46,13 +46,13 @@ path=rbind(g,sp) %>% left_join(maas2)
 
 # log fold change for each path
 lfc = path %>% 
-  group_by(Group,Pathobiont) %>% 
+  group_by(Group,`Opportunistic\nBacteria` ) %>% 
   summarise(Abundance = mean(Abundance)) %>% ungroup() %>% 
   pivot_wider(names_from = Group, values_from = Abundance) %>% 
   mutate(lfc = log2(`LM Day 28`/`CON Day 28`)) %>% 
   left_join(maas2) %>% 
   arrange(lfc) %>% 
-  mutate(Pathobiont = factor(Pathobiont, levels = .$Pathobiont),
+  mutate(`Opportunistic\nBacteria`  = factor(`Opportunistic\nBacteria` , levels = .$`Opportunistic\nBacteria` ),
          Dir = ifelse(lfc>0,'Pos','Neg'),
          Sig = qval<0.05)
 ```
@@ -61,11 +61,11 @@ lfc = path %>%
 
 ```{r Stacked Barplot of Pathobionts}
 stack = path %>% filter(Day == 'Day 28') %>% 
-  group_by(Diet,Pathobiont) %>% 
+  group_by(Diet,`Opportunistic\nBacteria`) %>% 
   summarise(Abundance = mean(Abundance)) %>% ungroup()
   
 p1 = stack %>% 
-  ggplot(aes(x = Diet, y = Abundance, fill = Pathobiont)) + 
+  ggplot(aes(x = Diet, y = Abundance, fill = `Opportunistic\nBacteria`)) + 
   geom_bar(stat="identity") +
   theme_classic(base_size = 16) + 
   ylab("Rel Abundance (Day 28)") + xlab('')
@@ -85,9 +85,9 @@ p2 = summed %>%
   geom_jitter(height = 0, width = 0.2) +
   theme_classic(base_size = 16) + 
   ggpubr::stat_compare_means(comparisons = list(c('LM','CON')),size=5)+
-  ylab('Total Pathobionts (Rel Ab, Day 28)') +
+  ylab('Total Opportunistic Bacteria\n(Rel Ab, Day 28)') +
   xlab('') + theme(legend.position = 'none')
-ggsave('Plots/Bacteriome/Fig. 4b - Total Pathobionts.png',height = 5, width = 5)
+ggsave('Plots/Bacteriome/Fig. 4b - Total Opportunistic Bacteria.png',height = 5, width = 5)
 ```
 
 # Fig. 4c - Increased Pathobionts
@@ -95,21 +95,21 @@ ggsave('Plots/Bacteriome/Fig. 4b - Total Pathobionts.png',height = 5, width = 5)
 ```{r}
 # Set order by factoring
 temp_lfc = lfc %>% arrange(-`LM Day 28`) %>% 
-  mutate(Pathobiont = factor(Pathobiont, levels = .$Pathobiont))
-path$Pathobiont = factor(path$Pathobiont, levels = temp_lfc$Pathobiont)
-maas2$Pathobiont = factor(maas2$Pathobiont, levels = temp_lfc$Pathobiont)
+  mutate(`Opportunistic\nBacteria`  = factor(`Opportunistic\nBacteria` , levels = .$`Opportunistic\nBacteria` ))
+path$`Opportunistic\nBacteria`  = factor(path$`Opportunistic\nBacteria` , levels = temp_lfc$`Opportunistic\nBacteria` )
+maas2$`Opportunistic\nBacteria`  = factor(maas2$`Opportunistic\nBacteria` , levels = temp_lfc$`Opportunistic\nBacteria` )
 
 cols = c('CON' = '#FC746E','LM' = '#01BEC3')
-max_per_path = path %>% group_by(Pathobiont) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
-  mutate(Pathobiont = factor(Pathobiont, levels = temp_lfc$Pathobiont))
-max_pos = max_per_path %>% filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc>0]) %>% droplevels() %>%
-  arrange(Pathobiont) %>% mutate(N = c(1:nrow(.))+0.25)
+max_per_path = path %>% group_by(`Opportunistic\nBacteria` ) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(`Opportunistic\nBacteria`  = factor(`Opportunistic\nBacteria` , levels = temp_lfc$`Opportunistic\nBacteria` ))
+max_pos = max_per_path %>% filter(`Opportunistic\nBacteria`  %in% temp_lfc$`Opportunistic\nBacteria` [temp_lfc$lfc>0]) %>% droplevels() %>%
+  arrange(`Opportunistic\nBacteria` ) %>% mutate(N = c(1:nrow(.))+0.25)
 
 p3p = path %>% left_join(max_pos) %>% 
   left_join(temp_lfc) %>% left_join(maas2) %>% 
-  filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc>0]) %>% 
+  filter(`Opportunistic\nBacteria`  %in% temp_lfc$`Opportunistic\nBacteria` [temp_lfc$lfc>0]) %>% 
   mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
-  ggplot(aes(Pathobiont, Abundance, fill = Diet)) +
+  ggplot(aes(`Opportunistic\nBacteria` , Abundance, fill = Diet)) +
    geom_boxplot(outlier.shape = NA) +
    scale_fill_manual(values = cols) +
    geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
@@ -118,7 +118,7 @@ p3p = path %>% left_join(max_pos) %>%
    ylab('Rel Abundance') + xlab('') +
   geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
   scale_y_log10()
-ggsave('Plots/Bacteriome/Fig. 4c - Increased Pathobionts.png', height = 5, width =9)
+ggsave('Plots/Bacteriome/Fig. 4c - Increased Opportunistic Bacteria.png', height = 5, width =9)
 ```
 
 # Fig. 4d - Decreased Pathobionts
@@ -126,21 +126,21 @@ ggsave('Plots/Bacteriome/Fig. 4c - Increased Pathobionts.png', height = 5, width
 ```{r}
 # Set order by factoring
 temp_lfc = lfc %>% arrange(-`LM Day 28`) %>% 
-  mutate(Pathobiont = factor(Pathobiont, levels = .$Pathobiont))
-path$Pathobiont = factor(path$Pathobiont, levels = temp_lfc$Pathobiont)
-maas2$Pathobiont = factor(maas2$Pathobiont, levels = temp_lfc$Pathobiont)
+  mutate(`Opportunistic\nBacteria`  = factor(`Opportunistic\nBacteria` , levels = .$`Opportunistic\nBacteria` ))
+path$`Opportunistic\nBacteria`  = factor(path$`Opportunistic\nBacteria` , levels = temp_lfc$`Opportunistic\nBacteria` )
+maas2$`Opportunistic\nBacteria`  = factor(maas2$`Opportunistic\nBacteria` , levels = temp_lfc$`Opportunistic\nBacteria` )
 
 cols = c('CON' = '#FC746E','LM' = '#01BEC3')
-max_per_path = path %>% group_by(Pathobiont) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
-  mutate(Pathobiont = factor(Pathobiont, levels = temp_lfc$Pathobiont))
-max_neg = max_per_path %>% filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc<0]) %>% droplevels() %>%
-arrange(Pathobiont) %>% mutate(N = c(1:nrow(.))+0.25)
+max_per_path = path %>% group_by(`Opportunistic\nBacteria` ) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(`Opportunistic\nBacteria`  = factor(`Opportunistic\nBacteria` , levels = temp_lfc$`Opportunistic\nBacteria` ))
+max_neg = max_per_path %>% filter(`Opportunistic\nBacteria`  %in% temp_lfc$`Opportunistic\nBacteria` [temp_lfc$lfc<0]) %>% droplevels() %>%
+arrange(`Opportunistic\nBacteria` ) %>% mutate(N = c(1:nrow(.))+0.25)
 
 p3n = path %>% left_join(max_neg) %>% 
   left_join(temp_lfc) %>% left_join(maas2) %>% 
-  filter(Pathobiont %in% temp_lfc$Pathobiont[temp_lfc$lfc<0]) %>% 
+  filter(`Opportunistic\nBacteria`  %in% temp_lfc$`Opportunistic\nBacteria` [temp_lfc$lfc<0]) %>% 
   mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
-  ggplot(aes(Pathobiont, Abundance, fill = Diet)) +
+  ggplot(aes(`Opportunistic\nBacteria` , Abundance, fill = Diet)) +
    geom_boxplot(outlier.shape = NA) +
    scale_fill_manual(values = cols) +
    geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
@@ -149,7 +149,7 @@ p3n = path %>% left_join(max_neg) %>%
    ylab('Rel Abundance') + xlab('') +
   geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
   scale_y_log10()
-ggsave('Plots/Bacteriome/Fig. 4d - Decreased Pathobionts.png', height = 5, width =6)
+ggsave('Plots/Bacteriome/Fig. 4d - Decreased Opportunistic Bacteria.png', height = 5, width =6)
 ```
 
 # FUNGI ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

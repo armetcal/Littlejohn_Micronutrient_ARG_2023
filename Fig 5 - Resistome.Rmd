@@ -169,42 +169,42 @@ path.rel = path %>% microbiome::transform('compositional')
 
 # Extract otu data into table
 g = path.rel %>% subset_taxa(Genus %in% path.genus) %>% tax_glom('Genus') %>% 
-  psmelt() %>% rename(Pathobiont = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
 sp = path.rel %>% subset_taxa(Species %in% path.species) %>% tax_glom('Species') %>% 
-  psmelt() %>% rename(Pathobiont = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
 
 # Maaslin stats
 maas = readxl::read_xlsx('Results Files/Bacteriome/Fig. 1 Supplement - Bacterial Maaslin2.xlsx',sheet='All Results') %>%
   filter((Level=='Genus' & Genus %in% path.genus) | (Level=='Species' & Species %in% path.species)) %>% 
-  mutate(Pathobiont = ifelse(is.na(Species),Genus,Species)) %>% 
-  select(Pathobiont, qval) %>% 
+  mutate(`Opportunistic\nBacteria` = ifelse(is.na(Species),Genus,Species)) %>% 
+  select(`Opportunistic\nBacteria`, qval) %>% 
   mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
                       ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
 
 # sample-specific data with qvals
 path=rbind(g,sp) %>% left_join(maas)
 
-# Remove ns pathobiont
+# Remove ns `Opportunistic\nBacteria`
 path = path %>% filter(symb != '')
 
-# Categorize pathobionts
-path$cat = sapply(path$Pathobiont,function(x)ifelse(x %in% c('Staphylococcus','Streptococcus','Prevotella copri'),'Down','Up'))
+# Categorize `Opportunistic\nBacteria`s
+path$cat = sapply(path$`Opportunistic\nBacteria`,function(x)ifelse(x %in% c('Staphylococcus','Streptococcus','Prevotella copri'),'Down','Up'))
 
-# Combine pathobiont and CARD data
-df = df.res %>% left_join(path %>% select(Sample, Day, Diet, Abundance, Pathobiont, cat))
+# Combine `Opportunistic\nBacteria` and CARD data
+df = df.res %>% left_join(path %>% select(Sample, Day, Diet, Abundance, `Opportunistic\nBacteria`, cat))
 
 # Run Spearman correlations ~~~~~~~~~~~~~~
 
 # CON
 df.stats.con = df %>% filter(Diet=='CON',Day=='Day 28') %>% 
-  group_by(Drug_Class,Pathobiont,cat) %>% 
+  group_by(Drug_Class,`Opportunistic\nBacteria`,cat) %>% 
   group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
   group_by(Drug_Class) %>% 
   mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
   mutate(Group = 'CON')
 # LM
 df.stats.lm = df %>% filter(Diet=='LM',Day=='Day 28') %>% 
-  group_by(Drug_Class,Pathobiont,cat) %>% 
+  group_by(Drug_Class,`Opportunistic\nBacteria`,cat) %>% 
   group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
   group_by(Drug_Class) %>% 
   mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
@@ -218,19 +218,19 @@ df.stats = rbind(df.stats.con,df.stats.lm) %>% filter(!is.na(estimate)) %>%
 # Plot Sig Correlations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 df.sig = df.stats %>% filter(qval<0.05) %>% 
-  mutate(comparison = paste0(Drug_Class,Pathobiont))
+  mutate(comparison = paste0(Drug_Class,`Opportunistic\nBacteria`))
 
 min_nonzero = min(df$Count[df$Count>0])
   
 temp = df %>%
-  mutate(comparison = paste0(Drug_Class,Pathobiont)) %>% 
+  mutate(comparison = paste0(Drug_Class,`Opportunistic\nBacteria`)) %>% 
   filter(comparison %in% df.sig$comparison) %>% 
   mutate(Count = Count + min_nonzero/2) %>% 
-  left_join(df.stats %>% select(Drug_Class,Pathobiont,Group,label.lm,label.con) %>% rename(Diet=Group)) %>% 
+  left_join(df.stats %>% select(Drug_Class,`Opportunistic\nBacteria`,Group,label.lm,label.con) %>% rename(Diet=Group)) %>% 
   mutate(Drug_Class = as.character(Drug_Class)) %>% 
   mutate(Drug_Class = str_wrap(Drug_Class, 30))
 
-annotations1 = temp %>% select(Drug_Class,Pathobiont,Diet,label.lm,label.con) %>% unique 
+annotations1 = temp %>% select(Drug_Class,`Opportunistic\nBacteria`,Diet,label.lm,label.con) %>% unique 
 
 # Wrap this name tighter for plotting
 annotations1$Drug_Class[annotations1$Drug_Class=='Diaminopyrimidine\nAntibiotic;Fluoroquinolone\nAntibiotic;Glycylcycline;Nitrofuran\nAntibiotic;Tetracycline\nAntibiotic'] = 'Diaminopyrimidine Antibiotic;\nFluoroquinolone Antibiotic;\nGlycylcycline;\nNitrofuran Antibiotic;\nTetracycline Antibiotic'
@@ -247,16 +247,16 @@ p1 = temp %>%
   theme_classic(base_size=14) +
   xlab('Rel. Ab, Day 28') +
   ylab('RPKM, Day 28') +
-  ggh4x::facet_nested(. ~ Drug_Class + Pathobiont,
+  ggh4x::facet_nested(. ~ Drug_Class + `Opportunistic\nBacteria`,
                       scales = 'free',space='free_y',axes='margins') +
   theme(legend.position = 'none') +
   theme(axis.text.x = element_text(angle = 35, vjust = 1, hjust=1)) +
   scale_y_log10()
-ggsave('Plots/Functional/Fig 5e - ARG Pathobiont Scatterplots.png',height=6,width=20)
+ggsave('Plots/Functional/Fig 5e - ARG Opportunistic Bacteria Scatterplots.png',height=6,width=20)
 
 
 # Save Stats
-write.csv(df.stats,'Results Files/Functional/Pathobiont_vs_ARG_Drug_Classes_Spearman.csv',row.names = F)
+write.csv(df.stats,'Results Files/Functional/Opportunistic_Bacteria_vs_ARG_Drug_Classes_Spearman.csv',row.names = F)
 ```
 
 # Fig. 5f - Misc
@@ -290,17 +290,17 @@ temp %>%
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
   geom_text(aes(x=0,y=680,label=label.con),
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
-  xlab('Total Pathobionts (Rel Ab)') +
+  xlab('Total Opportunistic Bacteria (Rel Ab)') +
   ylab('Total ARGs (RPKM)') + theme(legend.position = 'none')
-ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Pathobiont.png',height = 5, width = 5)
+ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png',height = 5, width = 5)
 ```
 
 ```{r Antibiotic efflux vs Enterococcus}
 temp = psm %>% filter(Day == 'Day 28') %>% 
   left_join(path) %>% 
-  filter(Pathobiont=='Enterococcus',
+  filter(`Opportunistic\nBacteria`=='Enterococcus',
          Resistance_Mechanism == 'Antibiotic Efflux') %>% 
-  group_by(Sample,Diet,Resistance_Mechanism,Pathobiont,Abundance) %>% 
+  group_by(Sample,Diet,Resistance_Mechanism,`Opportunistic\nBacteria`,Abundance) %>% 
   summarize(Count=sum(Count)) %>% ungroup
 
 # Calculate Spearman correlations
@@ -321,9 +321,9 @@ temp %>%
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
   geom_text(aes(x=0,y=680,label=label.con),
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
-  xlab('Total Pathobionts (Rel Ab)') +
+  xlab('Total Opportunistic Bacteria (Rel Ab)') +
   ylab('Total ARGs (RPKM)') + theme(legend.position = 'none')
-ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Pathobiont.png',height = 5, width = 5)
+ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png',height = 5, width = 5)
 ```
 
 
@@ -332,7 +332,7 @@ ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Pathobiont.png',height = 5
 # # Arrange significance ~~~~~~~~~~~~~
 # temp = df.stats %>% filter(Group == 'CON',Drug_Class=='Peptide Antibiotic') %>% 
 #   arrange(estimate)
-# df.stats$Pathobiont = factor(df.stats$Pathobiont, levels = temp$Pathobiont)
+# df.stats$`Opportunistic\nBacteria` = factor(df.stats$`Opportunistic\nBacteria`, levels = temp$`Opportunistic\nBacteria`)
 # 
 # df.stats %>% 
 #   mutate(Drug_Class = Drug_Class %>% str_replace_all('\n',' ') %>% str_replace_all(';',', ') %>% str_wrap(50)) %>% 
@@ -341,7 +341,7 @@ ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Pathobiont.png',height = 5
 #                       ifelse(qval>0.01,'*',
 #                              ifelse(qval>0.001,'**',
 #                                     ifelse(qval<=0.001,'***',''))))) %>% 
-#   ggplot(aes(Drug_Class,Pathobiont,col = Rho)) +
+#   ggplot(aes(Drug_Class,`Opportunistic\nBacteria`,col = Rho)) +
 #   geom_point(size =14) +
 #   theme_classic(base_size = 14) +
 #   scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
@@ -349,6 +349,6 @@ ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Pathobiont.png',height = 5
 #   ylab(NULL) + xlab(NULL) +
 #   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
 #   facet_grid(cols = vars(Group),rows = vars(cat),  scales = 'free',space = 'free')
-# ggsave('Plots/Functional/CARD/P4_Pathobiont_Heatmap_drug_class.jpeg',height=10,width=15)
+# ggsave('Plots/Functional/CARD/P4_Opportunistic_Bacteria_Heatmap_drug_class.jpeg',height=10,width=15)
 ```
 
