@@ -75,19 +75,19 @@ ggsave('Plots/Bacteriome/Fig. 4a - Stacked Barplot.png', height = 5, width = 5)
 # Fig. 4b - Total Pathobiont Boxplots
 
 ```{r Summed Pathobionts}
-summed = path %>% filter(Day == 'Day 28') %>% 
-  group_by(Sample,Diet) %>% 
+summed = path %>%
+  group_by(Sample,Group) %>% 
   summarise(Abundance = sum(Abundance)) %>% ungroup()
 
 p2 = summed %>%
-  ggplot(aes(Diet, Abundance, fill = Diet)) +
+  ggplot(aes(Group, Abundance, fill = Group)) +
   geom_boxplot(outlier.shape = NA) + 
   geom_jitter(height = 0, width = 0.2) +
   theme_classic(base_size = 16) + 
-  ggpubr::stat_compare_means(comparisons = list(c('LM','CON')),size=5)+
-  ylab('Total Opportunistic Bacteria\n(Rel Ab, Day 28)') +
+  ggpubr::stat_compare_means(comparisons = list(c('CON Day 0','LM Day 0'),c('CON Day 0','CON Day 28'),c("LM Day 0",'LM Day 28'),c('CON Day 28','LM Day 28')),size=5)+
+  ylab('Total Opportunistic Bacteria (Rel Ab)') +
   xlab('') + theme(legend.position = 'none')
-ggsave('Plots/Bacteriome/Fig. 4b - Total Opportunistic Bacteria.png',height = 5, width = 5)
+ggsave('Plots/Bacteriome/Fig. 4b - Total Opportunistic Bacteria.png',height = 5, width = 7)
 ```
 
 # Fig. 4c - Increased Pathobionts
