@@ -1,0 +1,109 @@
+---
+title: "9. Heatmap of Fungi vs ARGs"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r Load Data}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+```
+
+```{r Load viruses}
+# ps output is bacterial, raw counts
+source('0. Initialize Fungal Data.R')
+```
+
+```{r}
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Fungome/Fig. 2 Supplement - Fungal Maaslin2.xlsx',sheet='Genus') %>% filter(qval<0.01)
+
+ps.rel = ps %>% tax_glom('Genus') %>% microbiome::transform('clr') %>% 
+  subset_taxa(Genus %in% maas$Genus) %>% psmelt() %>% 
+  filter(Day=='Day 28') %>% 
+  left_join(maas %>% select(Genus,coef,qval)) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+```
+
+```{r Prep CARD Data}
+card = readxl::read_xlsx('Data Files/ARG_master.xlsx') %>% 
+  rename(MDB_ID = SampleID) %>% 
+  select(c(Protein_Accession:Resistance_Mechanism))
+
+# Add sample info
+card = card %>% left_join(sample_data(ps) %>% as.data.frame)
+
+# 30% prevalence filter
+prevfilter = card %>% filter(Day == 'Day 28') %>% 
+  group_by(Sample,ARO_Accession) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Count = Count>0) %>% 
+  group_by(ARO_Accession) %>% 
+  summarize(Count = sum(Count)/20) %>% ungroup() %>% 
+  filter(Count>0.3)
+card = card %>% filter(ARO_Accession %in% prevfilter$ARO_Accession)
+```
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Correlate ARGs with SEED
+
+```{r Combine}
+df = left_join(ps.rel,card) %>% mutate(Association = ifelse(coef>0,'Up','Down'))
+```
+
+```{r Run stats and plot}
+# CON
+df.stats.con = df %>% filter(Diet=='CON',Day=='Day 28') %>% 
+  group_by(Genus,ARO_Accession,Resistance_Mechanism,Association) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup %>% group_by(Genus,Association) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'CON')
+# LM
+df.stats.lm = df %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(Genus,ARO_Accession,Resistance_Mechanism,Association) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup %>% group_by(Genus,Association) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'LM')
+
+df.stats = rbind(df.stats.con,df.stats.lm) %>% filter(!is.na(estimate)) %>% 
+  mutate(label.lm = paste(Group,': \u03C1=',as.character(round(estimate,2)),', q=',signif(qval,2),sep='')) %>%
+  mutate(label.con = ifelse(Group=='CON',label.lm,NA),
+         label.lm = ifelse(Group=='LM',label.lm,NA)) %>% 
+  arrange(estimate) %>% 
+  mutate(ARO_Accession = as.character(ARO_Accession))
+
+order = df.stats %>% filter(Group=='LM',Genus==df.stats$Genus[1]) %>% 
+  arrange(-estimate)
+df.stats = df.stats %>% mutate(ARO_Accession = factor(ARO_Accession, levels = order$ARO_Accession))
+
+# Arrange significance ~~~~~~~~~~~~~
+df.stats %>% 
+  mutate(Resistance_Mechanism = str_wrap(Resistance_Mechanism,25) %>% str_to_title) %>% 
+  rename("Rho" = estimate) %>% 
+  mutate(Qval = ifelse(qval>0.05,'',
+                      ifelse(qval>0.01,'*',
+                             ifelse(qval>0.001,'**',
+                                    ifelse(qval<=0.001,'***',''))))) %>% 
+  ggplot(aes(Genus,ARO_Accession,col = Rho)) +
+  geom_point(size =14) +
+  theme_classic(base_size = 14) +
+  scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
+  geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
+  ylab('ARG (ARO Accession)') + xlab(NULL) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  ggh4x::facet_nested(Resistance_Mechanism ~ Group + Association, scales = 'free', space = 'free') +
+  # facet_grid(cols = vars(Group),rows = vars(Resistance_Mechanism), scales = 'free',space = 'free') +
+  theme(strip.text.y.right = element_text(angle = 0))
+ggsave('Plots/Functional/Fig. S3d - ARG vs Fungal Heatmap.jpeg',height=12,width=16)
+```
+
+```{r Save stats}
+write.csv(df.stats,'Results Files/Functional/Fig. S3d ARG vs Fungi Heatmap Statistics.csv',row.names = F)
+```
+

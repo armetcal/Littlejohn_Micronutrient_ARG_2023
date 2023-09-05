@@ -3,12 +3,11 @@ library(tidyverse)
 library(here)
 
 metadata = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$Sample)
-
-species <- read.delim("Data Files/all_taxonomic_abundances.tsv",check.names=F) %>% as.data.frame() %>% 
-  separate(`Consensus Lineage`,sep = '; ', 
-           into=c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),remove = F) %>% 
-  select(-`#OTU ID`) %>% 
-  mutate(`Consensus Lineage` = `Consensus Lineage` %>% str_replace_all('; ','.')) %>% 
+species <- read.delim("Data Files/all_taxonomic_abundances.tsv",check.names=F) %>% as.data.frame() %>%
+  separate(`Consensus Lineage`,sep = '; ',
+           into=c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),remove = F) %>%
+  select(-`#OTU ID`) %>%
+  mutate(`Consensus Lineage` = `Consensus Lineage` %>% str_replace_all('; ','.')) %>%
   column_to_rownames('Consensus Lineage')
 
 names(species)[1:40] = sapply(names(species)[1:40], function(x) {
