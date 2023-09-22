@@ -1,0 +1,74 @@
+2023-09-21 16:55:34 INFO::Writing function arguments to log file
+2023-09-21 16:55:34 DEBUG::Function arguments
+2023-09-21 16:55:34 DEBUG::Output folder: temp
+2023-09-21 16:55:34 DEBUG::Min Abundance: 0.000010
+2023-09-21 16:55:34 DEBUG::Min Prevalence: 0.300000
+2023-09-21 16:55:34 DEBUG::Normalization: TSS
+2023-09-21 16:55:34 DEBUG::Transform: AST
+2023-09-21 16:55:34 DEBUG::Analysis method: LM
+2023-09-21 16:55:34 DEBUG::Max significance: 0.050000
+2023-09-21 16:55:34 DEBUG::Random effects:
+2023-09-21 16:55:34 DEBUG::Fixed effects: Diet
+2023-09-21 16:55:34 DEBUG::Correction method: BH
+2023-09-21 16:55:34 DEBUG::Standardize: FALSE
+2023-09-21 16:55:34 DEBUG::Cores: 1
+2023-09-21 16:55:34 INFO::Verifying options selected are valid
+2023-09-21 16:55:34 INFO::Determining format of input files
+2023-09-21 16:55:34 INFO::Input format is data samples as columns and metadata samples as rows
+2023-09-21 16:55:34 DEBUG::Transformed data so samples are rows
+2023-09-21 16:55:34 DEBUG::The following samples were found to have metadata but no features. They will be removed. CON_1_D0,CON_2_D0,CON_3_D0,CON_4_D0,CON_5_D0,CON_6_D0,CON_7_D0,CON_8_D0,CON_9_D0,CON_10_D0,LM_1_D0,LM_2_D0,LM_3_D0,LM_4_D0,LM_5_D0,LM_6_D0,LM_7_D0,LM_8_D0,LM_9_D0,LM_10_D0
+2023-09-21 16:55:34 DEBUG::A total of 20 samples were found in both the data and metadata
+2023-09-21 16:55:34 DEBUG::Reordering data/metadata to use same sample ordering
+2023-09-21 16:55:34 INFO::Formula for fixed effects: expr ~  Diet
+2023-09-21 16:55:34 INFO::Filter data based on min abundance and min prevalence
+2023-09-21 16:55:34 INFO::Total samples in data: 20
+2023-09-21 16:55:34 INFO::Min samples required with min abundance for a feature not to be filtered: 6.000000
+2023-09-21 16:55:34 INFO::Total filtered features: 1
+2023-09-21 16:55:34 INFO::Filtered feature names from abundance and prevalence filtering: Plant.cell.walls.and.outer.surfaces...Cuticular.wax.in.plants.Predicted_protein
+2023-09-21 16:55:34 INFO::Total filtered features with variance filtering: 0
+2023-09-21 16:55:34 INFO::Filtered feature names from variance filtering:
+2023-09-21 16:55:34 INFO::Running selected normalization method: TSS
+2023-09-21 16:55:35 INFO::Bypass z-score application to metadata
+2023-09-21 16:55:35 INFO::Running selected transform method: AST
+2023-09-21 16:55:35 INFO::Running selected analysis method: LM
+2023-09-21 16:55:35 INFO::Fitting model to feature number 1, Amino.Acids.and.Derivatives.Glutamine..glutamate..aspartate..asparagine..ammonia.assimilation.Glutamine..Glutamate..Aspartate.and.Asparagine.Biosynthesis.Glutamate_synthase_.NADPH._large_chain_.EC_1.4.1.13.
+2023-09-21 16:55:35 INFO::Fitting model to feature number 2, Arabinose.Sensor.and.transport.module.Arabinose.An.Arabinose.Sensor.Histidine_kinase_in_an_arabinose_sensing_sensor
+2023-09-21 16:55:35 INFO::Fitting model to feature number 3, Carbohydrates.Di..and.oligosaccharides.Lactose.utilization.Beta.galactosidase_.EC_3.2.1.23.
+2023-09-21 16:55:35 INFO::Fitting model to feature number 4, Cell.Division.and.Cell.Cycle...Macromolecular.synthesis.operon.DNA_primase_.EC_2.7.7...
+2023-09-21 16:55:35 INFO::Fitting model to feature number 5, Cell.Wall.and.Capsule.Capsular.and.extracellular.polysacchrides.Exopolysaccharide.Biosynthesis.Glycosyl_transferase._group_2_family_protein
+2023-09-21 16:55:35 INFO::Fitting model to feature number 6, Central.metabolism...EC.6.4.1...Ligases.that.form.carbon.carbon.bonds.Oxaloacetate_decarboxylase_alpha_chain_.EC_4.1.1.3.
+2023-09-21 16:55:35 INFO::Fitting model to feature number 7, Clustering.based.subsystems.Biosynthesis.of.galactoglycans.and.related.lipopolysacharides.CBSS.258594.1.peg.3339.Glycosyltransferase
+2023-09-21 16:55:35 INFO::Fitting model to feature number 8, Cofactors..Vitamins..Prosthetic.Groups..Pigments.Biotin.Biotin.synthesis...utilization.Long.chain.fatty.acid..CoA_ligase_.EC_6.2.1.3.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 9, DNA.Metabolism.DNA.replication.DNA.replication.DNA_polymerase_III_alpha_subunit_.EC_2.7.7.7.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 10, Dormancy.and.Sporulation...Spore.Core.Dehydration.Spore_maturation_protein_A.like_protein
+2023-09-21 16:55:36 INFO::Fitting model to feature number 11, Fatty.Acids..Lipids..and.Isoprenoids.Fatty.acids.Fatty.Acid.Biosynthesis.FASII.3.oxoacyl..acyl.carrier_protein._reductase_.EC_1.1.1.100.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 12, Iron.acquisition.and.metabolism...RCJ.pfr.Ferrous_iron_transport_protein_B
+2023-09-21 16:55:36 INFO::Fitting model to feature number 13, Membrane.Transport...Ton.and.Tol.transport.systems.TonB.dependent_receptor
+2023-09-21 16:55:36 INFO::Fitting model to feature number 14, Metabolism.of.Aromatic.Compounds.Metabolism.of.central.aromatic.intermediates.Protocatechuate.branch.of.beta.ketoadipate.pathway.4.carboxymuconolactone_decarboxylase_.EC_4.1.1.44.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 15, Miscellaneous.Plant.Prokaryote.comparative.genomics.Omega.amidase.KE2.4.hydroxy.tetrahydrodipicolinate_synthase_.EC_4.3.3.7.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 16, Motility.and.Chemotaxis.Flagellar.motility.in.Prokaryota.Flagellum.in.Campylobacter.Cell_division_protein_FtsI_.Peptidoglycan_synthetase._.EC_2.4.1.129.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 17, Nitrogen.Metabolism...Ammonia.assimilation.Glutamate_synthase_.NADPH._large_chain_.EC_1.4.1.13.
+2023-09-21 16:55:36 INFO::Fitting model to feature number 18, Nucleosides.and.Nucleotides.Pyrimidines.De.Novo.Pyrimidine.Synthesis.Carbamoyl.phosphate_synthase_large_chain_.EC_6.3.5.5.
+2023-09-21 16:55:37 INFO::Fitting model to feature number 19, Phages..Prophages..Transposable.elements.Bacteriophage.integration.excision.lysogeny.Phage.integration.and.excision.Site.specific_recombinase
+2023-09-21 16:55:37 INFO::Fitting model to feature number 20, Phages..Prophages..Transposable.elements..Plasmids.Transposable.elements.Conjugative.transposon..Bacteroidales.Conjugative_transposon_protein_TraG
+2023-09-21 16:55:37 INFO::Fitting model to feature number 21, Phosphorus.Metabolism...Phosphate.metabolism.Phosphate_regulon_transcriptional_regulatory_protein_PhoB_.SphR.
+2023-09-21 16:55:37 INFO::Fitting model to feature number 22, Photosynthesis...Proteorhodopsin.Octaprenyl_diphosphate_synthase_.EC_2.5.1.90.
+2023-09-21 16:55:37 INFO::Fitting model to feature number 23, Potassium.metabolism...Potassium.homeostasis.Osmosensitive_K._channel_histidine_kinase_KdpD_.EC_2.7.3...
+2023-09-21 16:55:37 INFO::Fitting model to feature number 24, Predictions.based.on.plant.prokaryote.comparative.analysis...At3g21300.RNA_methyltransferase._TrmA_family
+2023-09-21 16:55:37 INFO::Fitting model to feature number 25, Protein.Metabolism.Protein.processing.and.modification.Signal.peptidase.Signal_peptidase_I_.EC_3.4.21.89.
+2023-09-21 16:55:37 INFO::Fitting model to feature number 26, RNA.Metabolism...Group.II.intron.associated.genes.Retron.type_reverse_transcriptase
+2023-09-21 16:55:37 INFO::Fitting model to feature number 27, Regulation.and.Cell.signaling...Two.component.regulatory.systems.in.Campylobacter.Two.component_system_response_regulator
+2023-09-21 16:55:37 INFO::Fitting model to feature number 28, Respiration...Soluble.cytochromes.and.functionally.related.electron.carriers.Ferredoxin
+2023-09-21 16:55:37 INFO::Fitting model to feature number 29, Secondary.Metabolism.Biologically.active.compounds.in.metazoan.cell.defence.and.differentiation.Steroid.sulfates.Arylsulfatase_.EC_3.1.6.1.
+2023-09-21 16:55:37 INFO::Fitting model to feature number 30, Stress.Response.Osmotic.stress.Choline.and.Betaine.Uptake.and.Betaine.Biosynthesis.Choline.sulfatase_.EC_3.1.6.6.
+2023-09-21 16:55:38 INFO::Fitting model to feature number 31, Sulfur.Metabolism...Galactosylceramide.and.Sulfatide.metabolism.Beta.galactosidase_.EC_3.2.1.23.
+2023-09-21 16:55:38 INFO::Fitting model to feature number 32, Transcriptional.regulation...CarD.DNA_mismatch_repair_protein_MutS
+2023-09-21 16:55:38 INFO::Fitting model to feature number 33, Virulence.Resistance.to.antibiotics.and.toxic.compounds.Cobalt.zinc.cadmium.resistance.Cobalt.zinc.cadmium_resistance_protein_CzcA._Cation_efflux_system_protein_CusA
+2023-09-21 16:55:38 INFO::Fitting model to feature number 34, Virulence..Disease.and.Defense.Bacteriocins..ribosomally.synthesized.antibacterial.peptides.Bacitracin.Stress.Response.ABC_transporter_ATP.binding_protein_YvcR
+2023-09-21 16:55:38 INFO::Counting total values for each feature
+2023-09-21 16:55:38 WARNING::Deleting existing residuals file: temp/residuals.rds
+2023-09-21 16:55:38 INFO::Writing residuals to file temp/residuals.rds
+2023-09-21 16:55:38 WARNING::Deleting existing fitted file: temp/fitted.rds
+2023-09-21 16:55:38 INFO::Writing fitted values to file temp/fitted.rds
+2023-09-21 16:55:38 INFO::Writing all results to file (ordered by increasing q-values): temp/all_results.tsv
+2023-09-21 16:55:38 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.050000 ) to file (ordered by increasing q-values): temp/significant_results.tsv

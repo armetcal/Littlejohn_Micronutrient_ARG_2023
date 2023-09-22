@@ -69,6 +69,7 @@ p1 = stack %>%
   geom_bar(stat="identity") +
   theme_classic(base_size = 16) + 
   ylab("Rel Abundance (Day 28)") + xlab('')
+data_4a = p1$data %>% select(Diet, `Opportunistic\nBacteria`, Abundance)
 ggsave('Plots/Bacteriome/Fig. 4a - Stacked Barplot.png', height = 5, width = 5)
 ```
 
@@ -87,6 +88,7 @@ p2 = summed %>%
   ggpubr::stat_compare_means(comparisons = list(c('CON Day 0','LM Day 0'),c('CON Day 0','CON Day 28'),c("LM Day 0",'LM Day 28'),c('CON Day 28','LM Day 28')),size=5)+
   ylab('Total Opportunistic Bacteria (Rel Ab)') +
   xlab('') + theme(legend.position = 'none')
+data_4b = p2$data %>% select(Group, Abundance)
 ggsave('Plots/Bacteriome/Fig. 4b - Total Opportunistic Bacteria.png',height = 5, width = 7)
 ```
 
@@ -118,6 +120,7 @@ p3p = path %>% left_join(max_pos) %>%
    ylab('Rel Abundance') + xlab('') +
   geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
   scale_y_log10()
+data_4c = p3p$data %>% select(Diet, `Opportunistic\nBacteria`, Abundance, qval, symb)
 ggsave('Plots/Bacteriome/Fig. 4c - Increased Opportunistic Bacteria.png', height = 5, width =9)
 ```
 
@@ -149,6 +152,7 @@ p3n = path %>% left_join(max_neg) %>%
    ylab('Rel Abundance') + xlab('') +
   geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
   scale_y_log10()
+data_4d = p3n$data %>% select(Diet, `Opportunistic\nBacteria`, Abundance, qval, symb)
 ggsave('Plots/Bacteriome/Fig. 4d - Decreased Opportunistic Bacteria.png', height = 5, width =6)
 ```
 
@@ -170,7 +174,7 @@ comps <- list( c("CON Day 0", "LM Day 0"),
                         c("LM Day 0", "LM Day 28"), 
                         c("LM Day 28", "CON Day 28") )
 
-ps.rel %>% 
+p = ps.rel %>% 
   ggplot(aes(Group, Abundance, fill = Group)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(height = 0, width = 0.2) +
@@ -179,6 +183,7 @@ ps.rel %>%
   ylab('Candida (Rel Ab.)') +
   xlab(NULL) +
   theme(legend.position = 'none')
+data_4e = p$data %>% select(Group, Abundance)
 ggsave('Plots/Fungome/Fig. 4e - Candida Genus.png',height = 5, width = 6)
 ```
 
@@ -196,7 +201,7 @@ comps <- list( c("CON Day 0", "LM Day 0"),
                         c("LM Day 0", "LM Day 28"), 
                         c("LM Day 28", "CON Day 28") )
 
-ps.rel %>% 
+p2 = ps.rel %>% 
   ggplot(aes(Group, Abundance, fill = Group)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(height = 0, width = 0.2) +
@@ -205,5 +210,16 @@ ps.rel %>%
   ylab('Relative Abundance') +
   xlab(NULL) +
   theme(legend.position = 'none') + facet_wrap('Species',nrow=1)
+data_4f = p2$data %>% select(Group, Species, Abundance)
 ggsave('Plots/Fungome/Fig. 4f - Candida Species.png',height = 5, width = 14)
+```
+
+```{r}
+L = list('Fig 4a' = data_4a,
+         'Fig 4b' = data_4b, 
+         'Fig 4c' = data_4c,
+         'Fig 4d' = data_4d,
+         'Fig 4e' = data_4e,
+         'Fig 4f' = data_4f)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 4.xlsx')
 ```

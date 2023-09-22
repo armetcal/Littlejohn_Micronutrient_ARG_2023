@@ -67,6 +67,7 @@ p = ggplot(bb, aes(Day, Abundance, fill = Family))+
   theme(legend.position = "right",
         legend.text = element_text(size = 16)) + ylab('Rel. Abundance') + 
   facet_wrap('Diet') + xlab('')
+data_2a = p$data %>% select(Sample,Diet,Day,Family,Abundance)
 
 ggsave('Plots/Fungome/Fig. 2a - Grouped Family Barplot.png',height = 6, width = 9)
 ```
@@ -150,6 +151,8 @@ temp2 = ps.rel %>% mutate(Family = factor(Family, levels = order$Family)) %>%
   scale_y_log10()
 
 ggarrange(plotlist = list(temp,temp2),ncol=2, common.legend = T, legend = 'right')
+data_2a_increased = temp$data %>% select(Sample,Diet,Day,Family,Abundance)
+data_2a_decreased = temp2$data %>% select(Sample,Diet,Day,Family,Abundance)
 
 ggsave('Plots/Fungome/Fig. 2a - Family Boxplots.png', height = 5, width =10)
 ```
@@ -233,6 +236,8 @@ temp2 = ps.rel %>% mutate(Genus = factor(Genus, levels = order$Genus)) %>%
   scale_y_log10()
 
 ggarrange(plotlist = list(temp,temp2),ncol=2, common.legend = T, legend = 'right')
+data_2b_increased = temp$data %>% select(Sample,Diet,Day,Family,Abundance)
+data_2b_decreased = temp2$data %>% select(Sample,Diet,Day,Family,Abundance)
 
 ggsave('Plots/Fungome/Fig. 2b - Genus Boxplots.png', height = 5, width =10)
 ```
@@ -250,7 +255,7 @@ df_alpha = df_alpha %>% left_join(sample_data(ps.rar) %>% as.matrix() %>%
 names(df_alpha)[1] = 'shannon'
   
 # Plot results - samples are paired
-ggplot(df_alpha, aes(x=Diet, y=shannon)) + 
+p=ggplot(df_alpha, aes(x=Diet, y=shannon)) + 
       geom_boxplot(outlier.shape = NA) +
       geom_jitter(aes(color=Day),  height = 0, width = 0.2, size=3) + 
       theme_classic(base_size = 16) +
@@ -258,6 +263,7 @@ ggplot(df_alpha, aes(x=Diet, y=shannon)) +
       ylab('Shannon Diversity') +  xlab('') +
       facet_wrap(~Day) +
       theme(legend.position = 'none')
+data_2c = p$data %>% select(Sample,Diet,Day,shannon)
 ggsave('Plots/Fungome/Fig. 2c - Alpha Diversity.png',height = 3.5, width = 6)
 ```
 
@@ -279,13 +285,13 @@ mds_data <- mds_data %>% left_join(sample_data(ps.rar) %>% as.matrix() %>%
 mds_data$Group = paste(mds_data$Diet, mds_data$Day)
 mds_data$Group = factor(mds_data$Group, 
                         levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
-ggplot(mds_data, aes(x = MDS1, y = MDS2, color = Group)) +
+g=ggplot(mds_data, aes(x = MDS1, y = MDS2, color = Group)) +
     geom_point(size = 2) + 
     stat_ellipse(size = 1) +
     theme_classic(base_size = 20) + 
     xlab('PCoA 1') + ylab('PCoA 2') +
     ggtitle('Bray-Curtis Beta Diversity')
-  
+data_2d = g$data
 ggsave('Plots/Fungome/Fig. 2d - Beta Diversity.png',height = 5, width = 7)
 ```
 
@@ -394,6 +400,7 @@ p = ggplot(bb, aes(Day, Abundance, fill = Family))+
   theme(legend.position = "right",
         legend.text = element_text(size = 16)) + ylab('Rel. Abundance') + 
   facet_wrap('Diet') + xlab('')
+data_2e = p$data %>% select(Sample,Diet,Day,Family,Abundance)
 
 ggsave('Plots/Virome/Fig. 2e - Grouped Family Barplot.png',height = 6, width = 9)
 ```
@@ -477,6 +484,8 @@ temp2 = ps.rel %>% mutate(Family = factor(Family, levels = order$Family)) %>%
   scale_y_log10()
 
 ggarrange(plotlist = list(temp,temp2),ncol=2, widths = c(3,2.3), common.legend = T, legend = 'right')
+data_2e_increased = temp$data %>% select(Sample,Diet,Day,Family,Abundance)
+data_2e_decreased = temp2$data %>% select(Sample,Diet,Day,Family,Abundance)
 
 ggsave('Plots/Virome/Fig. 2e - Family Boxplots.png', height = 5, width =10)
 ```
@@ -500,13 +509,14 @@ mds_data <- mds_data %>% left_join(sample_data(ps.rar) %>% as.matrix() %>%
 mds_data$Group = paste(mds_data$Diet, mds_data$Day)
 mds_data$Group = factor(mds_data$Group, 
                         levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
-ggplot(mds_data, aes(x = MDS1, y = MDS2, color = Group)) +
+g=ggplot(mds_data, aes(x = MDS1, y = MDS2, color = Group)) +
     geom_point(size = 2) + 
     stat_ellipse(size = 1) +
     theme_classic(base_size = 20) + 
     xlab('PCoA 1') + ylab('PCoA 2') +
     ggtitle('Bray-Curtis Beta Diversity')
-  
+data_2f = g$data
+
 ggsave('Plots/Virome/Fig. 2f - Beta Diversity.png',height = 5, width = 7)
 ```
 
@@ -560,4 +570,15 @@ rm(beta_dist,beta_dist_con,beta_dist_d0,beta_dist_d28,beta_dist_lm,
    pathotype.adonis.con,pathotype.adonis.d0,pathotype.adonis.d28,
    pathotype.adonis.lm,
    count_mat, mds, mds_data, temp_group)
+```
+
+# Save Source Data
+
+```{r}
+L = list('Fig 2a' = data_2a, 'Fig 2a Inc' = data_2a_increased, 'Fig 2a Dec' = data_2a_decreased,
+         'Fig 2b Inc' = data_2b_increased, 'Fig 2b Dec' = data_2b_decreased,
+         'Fig 2c' = data_2c, 'Fig 2d' = data_2d, 
+         'Fig 2e Barplot' = data_2e, 'Fig 2e Inc' = data_2e_increased, 'Fig 2e Dec' = data_2e_decreased,
+         'Fig 2f' = data_2f)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 2.xlsx')
 ```

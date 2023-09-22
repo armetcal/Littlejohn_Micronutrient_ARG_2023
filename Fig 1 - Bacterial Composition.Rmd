@@ -63,6 +63,8 @@ p = ggplot(bb, aes(Day, Abundance, fill = Phylum))+
   theme(legend.position = "right",
         legend.text = element_text(size = 16)) + ylab('Rel. Abundance') + 
   facet_wrap('Diet') + xlab('')
+data_1b = p$data %>% 
+  select(Sample,Diet,Day,Phylum,Abundance)
 
 ggsave('Plots/Bacteriome/Fig. 1b - Grouped Phylum Barplot.png',height = 6, width = 7)
 ```
@@ -102,6 +104,8 @@ p = ggplot(bb, aes(Mouse, Abundance, fill = Phylum))+
   theme(legend.position = "right",
         legend.text = element_text(size = 16)) + ylab('Rel. Abundance') + 
   facet_wrap('Group') + xlab('')
+data_1c = p$data %>% 
+  select(Sample,Diet,Day,Phylum,Abundance)
 
 ggsave('Plots/Bacteriome/Fig. 1c - Individual Phylum Barplots.png',height = 8, width = 10)
 ```
@@ -119,7 +123,7 @@ df_alpha = df_alpha %>% left_join(sample_data(ps.rar) %>% as.matrix() %>%
 names(df_alpha)[1] = 'shannon'
   
 # Plot results - samples are paired
-ggplot(df_alpha, aes(x=Diet, y=shannon)) + 
+p =ggplot(df_alpha, aes(x=Diet, y=shannon)) + 
       geom_boxplot(outlier.shape = NA) +
       geom_jitter(aes(color=Day),  height = 0, width = 0.2, size=3) + 
       theme_classic(base_size = 16) +
@@ -127,6 +131,9 @@ ggplot(df_alpha, aes(x=Diet, y=shannon)) +
       ylab('Shannon Diversity') +  xlab('') +
       facet_wrap(~Day) +
       theme(legend.position = 'none')
+data_1d = p$data %>% 
+  select(Sample,Diet,Day,shannon)
+
 ggsave('Plots/Bacteriome/Fig. 1d - Alpha Diversity.png',height = 3.5, width = 6)
 ```
 
@@ -148,13 +155,14 @@ mds_data <- mds_data %>% left_join(sample_data(ps.rar) %>% as.matrix() %>%
 mds_data$Group = paste(mds_data$Diet, mds_data$Day)
 mds_data$Group = factor(mds_data$Group, 
                         levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
-ggplot(mds_data, aes(x = MDS1, y = MDS2, color = Group)) +
+p = ggplot(mds_data, aes(x = MDS1, y = MDS2, color = Group)) +
     geom_point(size = 2) + 
     stat_ellipse(size = 1) +
     theme_classic(base_size = 20) + 
     xlab('PCoA 1') + ylab('PCoA 2') +
     ggtitle('Bray-Curtis Beta Diversity')
-  
+data_1e = p$data
+
 ggsave('Plots/Bacteriome/Fig. 1e - Beta Diversity.png',height = 5, width = 7)
 ```
 
@@ -234,6 +242,15 @@ en = temp %>%
   ylab('Enterobacteriaceae (CFU/g)') +
   xlab('') +
   theme(legend.position = 'none')
-
+data_1f = en$data %>% select(Sample,Diet, Day, `Enterobacteriaceae (CFU/g)`)
 ggsave('Plots/Bacteriome/Fig. 1f - Enterobacteriaceae CFUs.png', height = 5, width =6)
 ```
+
+# Save Source Data
+
+```{r}
+L = list('Fig 1b' = data_1b, 'Fig 1c' = data_1c, 'Fig 1d' = data_1d,
+         'Fig 1e' = data_1e, 'Fig 1f' = data_1f)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 1.xlsx')
+```
+

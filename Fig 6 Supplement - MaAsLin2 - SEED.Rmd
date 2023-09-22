@@ -1,0 +1,136 @@
+---
+title: "Fig 6 Supplement - MaAsLin2 - SEED"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r Load Elements}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+library(vegan)
+library(Maaslin2)
+
+# Load data
+df = read.csv("Data Files/SEED_abundances.csv")
+
+# Taxonomy
+t = df %>% select(contains('Subsystem'),Function) %>% 
+  mutate(OTU = paste(Subsystem.Level.1,Subsystem.Level.2,Subsystem.Level.3, Function,sep='|')) %>% 
+  mutate_all(function(x)str_replace_all(x,"'",'.')) %>% 
+  column_to_rownames('OTU') %>% as.matrix %>% tax_table()
+
+# Abundance
+o = df %>% select(-all_of(colnames(t))) %>% as.matrix %>% `rownames<-`(rownames(t)) %>%
+  otu_table(taxa_are_rows = T)
+
+# Sample data
+s = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$Sample) %>% 
+  mutate(Mouse = str_remove(Sample,'_D0') %>% str_remove('_D28'))
+
+# Phyloseq object
+ps = phyloseq(sample_data(s),o,t)
+ps@sam_data$Group = factor(ps@sam_data$Group, levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
+```
+
+# Run Maaslin2
+```{r}
+temp = ps %>% subset_samples(Day=='Day 28')
+# Eukaryotic species
+maas.sp = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 1e-5,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'TSS',
+    transform = 'AST',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+
+temp = ps %>% tax_glom('Subsystem.Level.3') %>% subset_samples(Day=='Day 28')
+# Eukaryotic genus
+maas.g = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 1e-5,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'TSS',
+    transform = 'AST',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+
+temp = ps %>% tax_glom('Subsystem.Level.2') %>% subset_samples(Day=='Day 28')
+# Eukaryotic family
+maas.f = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 1e-5,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'TSS',
+    transform = 'AST',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+
+temp = ps %>% tax_glom('Subsystem.Level.1') %>% subset_samples(Day=='Day 28')
+# Eukaryotic species
+maas.p = Maaslin2(
+    input_data = temp@otu_table %>% as.matrix, 
+    input_metadata = s, 
+    output = 'temp', 
+    min_abundance = 1e-5,
+    min_prevalence = 0.3,
+    max_significance = 0.05,
+    normalization = 'TSS',
+    transform = 'AST',
+    fixed_effects = 'Diet',
+    standardize = F,
+    plot_heatmap = F,
+    plot_scatter = F,
+    reference = 'Diet,CON')
+gc()
+```
+
+```{r}
+res = maas.sp$results %>% mutate(Level = "Function") %>%
+  rbind(maas.g$results %>% mutate(Level = "SL3")) %>%
+  rbind(maas.f$results %>% mutate(Level = "SL2")) %>%
+  rbind(maas.p$results %>% mutate(Level = "SL1")) %>% 
+  mutate(feature = str_replace_all(feature,'[^[:alnum:]|^_]','.'))
+
+t2 = ps@tax_table %>% as.matrix %>% as.data.frame %>% rownames_to_column('OTU') %>% mutate(OTU = str_replace_all(OTU,'[^[:alnum:]|^_]','.') %>% str_replace_all('[|]','.'))
+
+res = res %>%
+  dplyr::rename(OTU = feature) %>% 
+  left_join(t2) %>% 
+  select(OTU,Level,everything())
+
+res$Function[res$Level != 'Function'] = NA
+res$Subsystem.Level.3[!(res$Level %in% c('SL3','Function'))] = NA
+res$Subsystem.Level.2[!(res$Level %in% c('SL2','SL3','Function'))] = NA
+
+sig = res %>% filter(qval<0.01)
+
+writexl::write_xlsx(list('All Results' = res, 'All Diet Sig' = sig),
+                    'Results Files/Functional/Maaslin2_SEED_D28.xlsx')
+saveRDS(list(Function=maas.sp,SL3=maas.g,SL2=maas.f,SL1=maas.p),
+        'Results Files/Functional/Maaslin2_SEED_D28.rds')
+```

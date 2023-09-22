@@ -1,0 +1,151 @@
+"label","ARO_Accession","Resistance_Mechanism","statistic","p.value","estimate","qval","Group","label.lm","label.con"
+"Oxygen stress response /
+Human gut microbiome","3000191","antibiotic target protection",268.313547148427,0.0527782450136654,-0.626142709990467,0.390343319537452,"CON",NA,"CON: ρ=-0.63, q=0.39"
+"Regulation of
+Oxidative Stress Response","3000375","antibiotic target alteration",250,0.132823060175966,-0.515151515151515,0.23244035530794,"LM","LM: ρ=-0.52, q=0.23",NA
+"Regulation of
+Oxidative Stress Response","3007180","antibiotic inactivation",234,0.232418098250503,-0.418181818181818,0.325385337550704,"LM","LM: ρ=-0.42, q=0.33",NA
+"Oxidative stress","3000375","antibiotic target alteration",232.019897542944,0.244128681896491,-0.406181197229962,0.624180380260589,"CON",NA,"CON: ρ=-0.41, q=0.62"
+"Regulation of
+Oxidative Stress Response","3000191","antibiotic target protection",231.200913706759,0.250496003525328,-0.401217658828843,0.830314419392192,"CON",NA,"CON: ρ=-0.4, q=0.83"
+"Regulation of
+Oxidative Stress Response","3000190","antibiotic target protection",227.93757169636,0.276771473130731,-0.381439828462789,0.830314419392192,"CON",NA,"CON: ρ=-0.38, q=0.83"
+"Oxygen stress response /
+Human gut microbiome","3000190","antibiotic target protection",219.403663669735,0.352168660821274,-0.32971917375597,0.624180380260589,"CON",NA,"CON: ρ=-0.33, q=0.62"
+"Oxidative stress","3000300","antibiotic target protection",214.953682250364,0.39517129334856,-0.302749589396148,0.624180380260589,"CON",NA,"CON: ρ=-0.3, q=0.62"
+"Oxidative stress","3002875","antibiotic target replacement",214.953682250364,0.39517129334856,-0.302749589396148,0.624180380260589,"CON",NA,"CON: ρ=-0.3, q=0.62"
+"Oxidative stress","3004580","antibiotic efflux",212.871355387817,0.416120253507059,-0.29012942659283,0.624180380260589,"CON",NA,"CON: ρ=-0.29, q=0.62"
+"Oxygen stress response /
+Human gut microbiome","3000191","antibiotic target protection",212.871355387817,0.416120253507059,-0.29012942659283,0.624180380260589,"LM","LM: ρ=-0.29, q=0.62",NA
+"Oxygen stress response /
+Human gut microbiome","3005059","antibiotic efflux",208,0.469675250206491,-0.260606060606061,0.657545350289087,"LM","LM: ρ=-0.26, q=0.66",NA
+"Regulation of
+Oxidative Stress Response","3000196","antibiotic target protection",198,0.58354058456642,-0.2,0.644965909257623,"LM","LM: ρ=-0.2, q=0.64",NA
+"Oxygen stress response /
+Human gut microbiome","3000190","antibiotic target protection",196.382730544003,0.598668304071766,-0.190198366933353,0.739531434441593,"LM","LM: ρ=-0.19, q=0.74",NA
+"Oxidative stress","3000191","antibiotic target protection",193.72281323269,0.630536075556976,-0.174077655955698,0.861946865749199,"LM","LM: ρ=-0.17, q=0.86",NA
+"Regulation of
+Oxidative Stress Response","3000191","antibiotic target protection",193.72281323269,0.630536075556976,-0.174077655955698,0.662062879334825,"LM","LM: ρ=-0.17, q=0.66",NA
+"Regulation of
+Oxidative Stress Response","3000196","antibiotic target protection",190,0.681807643477163,-0.151515151515151,0.876609827327781,"CON",NA,"CON: ρ=-0.15, q=0.88"
+"Oxidative stress","3005059","antibiotic efflux",180,0.811416953056796,-0.0909090909090909,0.946653111899596,"LM","LM: ρ=-0.09, q=0.95",NA
+"Oxidative stress","3000196","antibiotic target protection",176,0.864753528804526,-0.0666666666666667,0.955210784637922,"CON",NA,"CON: ρ=-0.07, q=0.96"
+"Regulation of
+Oxidative Stress Response","3000375","antibiotic target alteration",174.574271077563,0.873494892371295,-0.058025885318566,0.910534230729969,"CON",NA,"CON: ρ=-0.06, q=0.91"
+"Oxidative stress","3000375","antibiotic target alteration",172,0.918633282432669,-0.0424242424242424,0.964564946554302,"LM","LM: ρ=-0.04, q=0.96",NA
+"Oxidative stress","3001855","antibiotic inactivation",163.987653853419,0.986579249480659,0.00613543119139849,0.986579249480659,"LM","LM: ρ=0.01, q=0.99",NA
+"Oxidative stress","3003948","antibiotic efflux",161.620195727105,0.955210784637922,0.0204836622599676,0.955210784637922,"CON",NA,"CON: ρ=0.02, q=0.96"
+"Regulation of
+Oxidative Stress Response","3003948","antibiotic efflux",158.240391454211,0.910534230729969,0.0409673245199351,0.910534230729969,"CON",NA,"CON: ρ=0.04, q=0.91"
+"Oxygen stress response /
+Human gut microbiome","3003209","antibiotic inactivation",158,0.918633282432669,0.0424242424242424,0.918633282432669,"LM","LM: ρ=0.04, q=0.92",NA
+"Oxidative stress","3003551","antibiotic efflux",155.425728922437,0.873494892371295,0.058025885318566,0.955210784637922,"CON",NA,"CON: ρ=0.06, q=0.96"
+"Oxidative stress","3007180","antibiotic inactivation",154,0.864753528804526,0.0666666666666667,0.955780216047108,"LM","LM: ρ=0.07, q=0.96",NA
+"Oxidative stress","3003551","antibiotic efflux",147.460183544566,0.770074459986722,0.106301917911723,0.946653111899596,"LM","LM: ρ=0.11, q=0.95",NA
+"Oxygen stress response /
+Human gut microbiome","3003948","antibiotic efflux",146.974377211229,0.763855690009,0.109246198719827,0.763855690009,"CON",NA,"CON: ρ=0.11, q=0.76"
+"Oxygen stress response /
+Human gut microbiome","3007180","antibiotic inactivation",146,0.758833070490857,0.115151515151515,0.7967747240154,"LM","LM: ρ=0.12, q=0.8",NA
+"Oxygen stress response /
+Human gut microbiome","3000196","antibiotic target protection",142,0.707203785571239,0.139393939393939,0.763855690009,"CON",NA,"CON: ρ=0.14, q=0.76"
+"Oxygen stress response /
+Human gut microbiome","3002459","antibiotic inactivation",141.929984617342,0.70005687327699,0.139818275046415,0.773747070464042,"LM","LM: ρ=0.14, q=0.77",NA
+"Regulation of
+Oxidative Stress Response","3003551","antibiotic efflux",140.237906180563,0.679008929705254,0.150073295875373,0.679008929705254,"LM","LM: ρ=0.15, q=0.68",NA
+"Oxidative stress","3005053","antibiotic target alteration",138,0.656721421523199,0.163636363636364,0.861946865749199,"LM","LM: ρ=0.16, q=0.86",NA
+"Oxygen stress response /
+Human gut microbiome","3004588","antibiotic efflux",138,0.656721421523199,0.163636363636364,0.766174991777066,"LM","LM: ρ=0.16, q=0.77",NA
+"Oxygen stress response /
+Human gut microbiome","3004580","antibiotic efflux",136.27718676731,0.630536075556976,0.174077655955698,0.763855690009,"CON",NA,"CON: ρ=0.17, q=0.76"
+"Regulation of
+Oxidative Stress Response","3003551","antibiotic efflux",136.27718676731,0.630536075556976,0.174077655955698,0.876609827327781,"CON",NA,"CON: ρ=0.17, q=0.88"
+"Oxidative stress","3003948","antibiotic efflux",136.19806041014,0.629579804222883,0.174557209635514,0.861946865749199,"LM","LM: ρ=0.17, q=0.86",NA
+"Oxidative stress","3000196","antibiotic target protection",136,0.631967363906089,0.175757575757576,0.861946865749199,"LM","LM: ρ=0.18, q=0.86",NA
+"Regulation of
+Oxidative Stress Response","3000300","antibiotic target protection",135.027790649781,0.615495125673858,0.181649753637689,0.876609827327781,"CON",NA,"CON: ρ=0.18, q=0.88"
+"Regulation of
+Oxidative Stress Response","3002875","antibiotic target replacement",135.027790649781,0.615495125673858,0.181649753637689,0.876609827327781,"CON",NA,"CON: ρ=0.18, q=0.88"
+"Oxygen stress response /
+Human gut microbiome","3001855","antibiotic inactivation",133.617269455997,0.598668304071766,0.190198366933353,0.739531434441593,"LM","LM: ρ=0.19, q=0.74",NA
+"Oxidative stress","3000300","antibiotic target protection",126.825105361702,0.520125727670661,0.231362997807867,0.861946865749199,"LM","LM: ρ=0.23, q=0.86",NA
+"Regulation of
+Oxidative Stress Response","3003948","antibiotic efflux",121.263721363546,0.459214300113386,0.265068355372447,0.535750016798951,"LM","LM: ρ=0.27, q=0.54",NA
+"Regulation of
+Oxidative Stress Response","3001855","antibiotic inactivation",117.419731110705,0.419089526673038,0.288365265995729,0.517698827066694,"LM","LM: ρ=0.29, q=0.52",NA
+"Oxygen stress response /
+Human gut microbiome","3000375","antibiotic target alteration",117.128644612183,0.41612025350706,0.29012942659283,0.624180380260589,"CON",NA,"CON: ρ=0.29, q=0.62"
+"Oxidative stress","3002459","antibiotic inactivation",113.844748499323,0.383319797800988,0.310031827276833,0.731792341256433,"LM","LM: ρ=0.31, q=0.73",NA
+"Oxidative stress","3000516","antibiotic efflux",111.838660205178,0.363927075967511,0.322189938150434,0.731792341256433,"LM","LM: ρ=0.32, q=0.73",NA
+"Oxidative stress","3000518","antibiotic efflux",110,0.348846243872153,0.333333333333333,0.731792341256433,"LM","LM: ρ=0.33, q=0.73",NA
+"Regulation of
+Oxidative Stress Response","3000300","antibiotic target protection",109.285288906268,0.33997117423968,0.33766491571959,0.446212166189579,"LM","LM: ρ=0.34, q=0.45",NA
+"Oxidative stress","3003209","antibiotic inactivation",108,0.330549465992496,0.345454545454545,0.731792341256433,"LM","LM: ρ=0.35, q=0.73",NA
+"Oxygen stress response /
+Human gut microbiome","3000196","antibiotic target protection",104,0.295604089197811,0.36969696969697,0.477514297934926,"LM","LM: ρ=0.37, q=0.48",NA
+"Oxygen stress response /
+Human gut microbiome","3000518","antibiotic efflux",104,0.295604089197811,0.36969696969697,0.477514297934926,"LM","LM: ρ=0.37, q=0.48",NA
+"Oxygen stress response /
+Human gut microbiome","3003922","antibiotic efflux",104,0.295604089197811,0.36969696969697,0.477514297934926,"LM","LM: ρ=0.37, q=0.48",NA
+"Oxidative stress","3002875","antibiotic target replacement",103.094765451408,0.285382295455815,0.375183239688433,0.731792341256433,"LM","LM: ρ=0.38, q=0.73",NA
+"Oxidative stress","3000191","antibiotic target protection",100.805174587385,0.266477921200522,0.389059547955241,0.624180380260589,"CON",NA,"CON: ρ=0.39, q=0.62"
+"Oxidative stress","3000190","antibiotic target protection",99.9289512969835,0.259430172039091,0.394369992139494,0.624180380260589,"CON",NA,"CON: ρ=0.39, q=0.62"
+"Regulation of
+Oxidative Stress Response","3004580","antibiotic efflux",97.9801024570563,0.244128681896491,0.406181197229962,0.830314419392192,"CON",NA,"CON: ρ=0.41, q=0.83"
+"Oxygen stress response /
+Human gut microbiome","3000375","antibiotic target alteration",96,0.232418098250503,0.418181818181818,0.477514297934926,"LM","LM: ρ=0.42, q=0.48",NA
+"Oxygen stress response /
+Human gut microbiome","3000516","antibiotic efflux",95.7899538520247,0.227551510224215,0.419454825139245,0.477514297934926,"LM","LM: ρ=0.42, q=0.48",NA
+"Oxidative stress","3000190","antibiotic target protection",95.1481158859282,0.222818104283032,0.423344752206496,0.731792341256433,"LM","LM: ρ=0.42, q=0.73",NA
+"Oxidative stress","3004580","antibiotic efflux",92,0.204200583289326,0.442424242424242,0.731792341256433,"LM","LM: ρ=0.44, q=0.73",NA
+"Oxidative stress","3004588","antibiotic efflux",92,0.204200583289326,0.442424242424242,0.731792341256433,"LM","LM: ρ=0.44, q=0.73",NA
+"Oxidative stress","3003923","antibiotic efflux",90,0.190932019316111,0.454545454545455,0.731792341256433,"LM","LM: ρ=0.45, q=0.73",NA
+"Oxygen stress response /
+Human gut microbiome","3004580","antibiotic efflux",90,0.190932019316111,0.454545454545455,0.477514297934926,"LM","LM: ρ=0.45, q=0.48",NA
+"Regulation of
+Oxidative Stress Response","3005059","antibiotic efflux",90,0.190932019316111,0.454545454545455,0.286398028974167,"LM","LM: ρ=0.45, q=0.29",NA
+"Regulation of
+Oxidative Stress Response","3000190","antibiotic target protection",89.0740390064437,0.180833170911726,0.460157339354887,0.286398028974167,"LM","LM: ρ=0.46, q=0.29",NA
+"Oxygen stress response /
+Human gut microbiome","3000300","antibiotic target protection",87.9286045280092,0.173485919794423,0.467099366496914,0.390343319537452,"CON",NA,"CON: ρ=0.47, q=0.39"
+"Oxygen stress response /
+Human gut microbiome","3002875","antibiotic target replacement",87.9286045280092,0.173485919794423,0.467099366496914,0.390343319537452,"CON",NA,"CON: ρ=0.47, q=0.39"
+"Oxygen stress response /
+Human gut microbiome","3004122","reduced permeability to antibiotic",86,0.166058037179348,0.478787878787879,0.477514297934926,"LM","LM: ρ=0.48, q=0.48",NA
+"Oxygen stress response /
+Human gut microbiome","3005053","antibiotic target alteration",80,0.132823060175966,0.515151515151515,0.46488071061588,"LM","LM: ρ=0.52, q=0.46",NA
+"Oxygen stress response /
+Human gut microbiome","3003551","antibiotic efflux",78.8315603019296,0.121502918817113,0.522232967867094,0.390343319537452,"CON",NA,"CON: ρ=0.52, q=0.39"
+"Regulation of
+Oxidative Stress Response","3000516","antibiotic efflux",78.7382033517988,0.121027394083801,0.522798767564856,0.231052297796347,"LM","LM: ρ=0.52, q=0.23",NA
+"Regulation of
+Oxidative Stress Response","3002875","antibiotic target replacement",74.2056559953991,0.0993224803649861,0.550268751543036,0.208577208766471,"LM","LM: ρ=0.55, q=0.21",NA
+"Oxidative stress","3003922","antibiotic efflux",74,0.10429776397167,0.551515151515151,0.731792341256433,"LM","LM: ρ=0.55, q=0.73",NA
+"Oxygen stress response /
+Human gut microbiome","3003923","antibiotic efflux",70,0.0877680432613642,0.575757575757576,0.36862578169773,"LM","LM: ρ=0.58, q=0.37",NA
+"Oxidative stress","3004122","reduced permeability to antibiotic",56,0.0440265528478427,0.660606060606061,0.731792341256433,"LM","LM: ρ=0.66, q=0.73",NA
+"Regulation of
+Oxidative Stress Response","3005053","antibiotic target alteration",54,0.0393814092829061,0.672727272727273,0.0918899549934475,"LM","LM: ρ=0.67, q=0.092",NA
+"Regulation of
+Oxidative Stress Response","3000518","antibiotic efflux",48,0.0275141191111856,0.709090909090909,0.0722245626668623,"LM","LM: ρ=0.71, q=0.072",NA
+"Regulation of
+Oxidative Stress Response","3003922","antibiotic efflux",40,0.0159208292880929,0.757575757575757,0.0477624878642786,"LM","LM: ρ=0.76, q=0.048",NA
+"Oxygen stress response /
+Human gut microbiome","3002875","antibiotic target replacement",33.9672535388146,0.00607802144001636,0.794137857340517,0.0319096125600859,"LM","LM: ρ=0.79, q=0.032",NA
+"Regulation of
+Oxidative Stress Response","3004122","reduced permeability to antibiotic",32,0.00823557082285116,0.806060606060606,0.028824497879979,"LM","LM: ρ=0.81, q=0.029",NA
+"Regulation of
+Oxidative Stress Response","3003209","antibiotic inactivation",30,0.0068111327718268,0.818181818181818,0.0286067576416725,"LM","LM: ρ=0.82, q=0.029",NA
+"Regulation of
+Oxidative Stress Response","3003923","antibiotic efflux",30,0.0068111327718268,0.818181818181818,0.0286067576416725,"LM","LM: ρ=0.82, q=0.029",NA
+"Regulation of
+Oxidative Stress Response","3002459","antibiotic inactivation",28.5859959981935,0.00317971408601042,0.826751539404888,0.022257998602073,"LM","LM: ρ=0.83, q=0.022",NA
+"Oxygen stress response /
+Human gut microbiome","3003948","antibiotic efflux",25.2572560640138,0.00198836867067904,0.846925720824159,0.0139185806947533,"LM","LM: ρ=0.85, q=0.014",NA
+"Oxygen stress response /
+Human gut microbiome","3000300","antibiotic target protection",20.5544527199531,0.000904109701949638,0.875427559273011,0.0094931518704712,"LM","LM: ρ=0.88, q=0.0095",NA
+"Regulation of
+Oxidative Stress Response","3004580","antibiotic efflux",20,0.0019770587107552,0.878787878787879,0.0207591164629296,"LM","LM: ρ=0.88, q=0.021",NA
+"Oxygen stress response /
+Human gut microbiome","3003551","antibiotic efflux",16.4274370833804,0.000380598963274584,0.90043977525224,0.00799257822876627,"LM","LM: ρ=0.9, q=0.008",NA
+"Regulation of
+Oxidative Stress Response","3004588","antibiotic efflux",10,0,0.939393939393939,0,"LM","LM: ρ=0.94, q=0",NA

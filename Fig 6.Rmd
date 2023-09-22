@@ -1,0 +1,456 @@
+---
+title: "Fig 6"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r Load Elements}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+
+# Load data
+df = read.csv("Data Files/SEED_abundances.csv")
+
+# Taxonomy
+t = df %>% select(contains('Subsystem'),Function) %>% 
+  mutate(OTU = paste(Subsystem.Level.1,Subsystem.Level.2,Subsystem.Level.3, Function,sep='|')) %>% 
+  mutate_all(function(x)str_replace_all(x,"'",'.')) %>% 
+  column_to_rownames('OTU') %>% as.matrix %>% tax_table()
+
+# Abundance
+o = df %>% select(-all_of(colnames(t))) %>% as.matrix %>% `rownames<-`(rownames(t))
+
+# Convert to Rel. Ab.
+cs = colSums(o) # Denominator
+o2 = (t(o)/cs) %>% t()
+
+# Sample data
+s = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$Sample) %>% 
+  mutate(Mouse = str_remove(Sample,'_D0') %>% str_remove('_D28'))
+
+# Phyloseq object
+ps = phyloseq(sample_data(s),otu_table(o2,taxa_are_rows=T),t)
+ps@sam_data$Group = factor(ps@sam_data$Group, levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
+
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+
+# SEED Maaslin2 results
+maas = readxl::read_xlsx('Results Files/Functional/Maaslin2_SEED_D28.xlsx',sheet = 'All Results')
+```
+
+# Fig 6a - Oxidative Stress-Related Genes
+
+```{r}
+to_test = c('Oxidative stress','Oxygen stress response / Human gut microbiome',
+            'Protection from Reactive Oxygen Species','Regulation of Oxidative Stress Response')
+temp = ps %>% tax_glom('Subsystem.Level.3') %>% 
+  subset_taxa(Subsystem.Level.3 %in% to_test) %>% 
+  psmelt()
+
+pval = maas %>% filter(Level=='SL3', Subsystem.Level.3 %in% to_test) %>% 
+  select(Subsystem.Level.3,pval) %>% 
+  mutate(qval=p.adjust(pval,method='BH')) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"*",
+                      ifelse(qval>0.001,'**',ifelse(qval>0.0001,'***','****'))))) 
+
+# Rename
+temp$Subsystem.Level.3[temp$Subsystem.Level.3=='Oxygen stress response / Human gut microbiome'] = 'Oxygen stress response/\nHuman gut microbiome'
+temp$Subsystem.Level.3[temp$Subsystem.Level.3=='Protection from Reactive Oxygen Species'] = 'Protection from Reactive\nOxygen Species'
+temp$Subsystem.Level.3[temp$Subsystem.Level.3=='Regulation of Oxidative Stress Response'] = 'Regulation of Oxidative\nStress Response'
+pval$Subsystem.Level.3[pval$Subsystem.Level.3=='Oxygen stress response / Human gut microbiome'] = 'Oxygen stress response/\nHuman gut microbiome'
+pval$Subsystem.Level.3[pval$Subsystem.Level.3=='Protection from Reactive Oxygen Species'] = 'Protection from Reactive\nOxygen Species'
+pval$Subsystem.Level.3[pval$Subsystem.Level.3=='Regulation of Oxidative Stress Response'] = 'Regulation of Oxidative\nStress Response'
+
+# Set order
+order = temp %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(Subsystem.Level.3) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+max_per_path = temp %>% filter(Day=='Day 28') %>% group_by(Subsystem.Level.3) %>% 
+  summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Subsystem.Level.3 = factor(Subsystem.Level.3, levels = order$Subsystem.Level.3)) %>% mutate(N = c(1:nrow(.))+0.25)
+
+p=temp %>% 
+  left_join(max_per_path) %>% left_join(pval) %>% 
+  mutate(Subsystem.Level.3 = factor(Subsystem.Level.3, levels = order$Subsystem.Level.3)) %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Subsystem.Level.3, Abundance, fill = Diet)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = cols) +
+  geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+  theme_classic(base_size = 18) + 
+  guides(x = guide_axis(angle = 45)) +
+  ylab('Relative Abundance') + xlab(NULL) +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1.5) +
+  scale_y_log10()
+data_6a = p$data %>% select(Diet,Subsystem.Level.3,qval,symb) %>% 
+  rename(Mechanism = Subsystem.Level.3)
+ggsave('Plots/Functional/Fig 6a - Oxidative Stress.png', height = 5, width =7)
+```
+
+# Fig 6b - Total ARGs vs Total Ox Stress
+
+```{r}
+to_test = c('Oxidative stress','Oxygen stress response / Human gut microbiome',
+            'Protection from Reactive Oxygen Species','Regulation of Oxidative Stress Response')
+temp = ps %>% tax_glom('Subsystem.Level.3') %>%
+  subset_taxa(Subsystem.Level.3 %in% to_test) %>% 
+  psmelt()
+
+temp2 = temp %>% select(-OTU) %>% select(-contains('Subsystem')) %>% ungroup() %>% group_by(Sample) %>% mutate(Abundance=sum(Abundance)) %>% ungroup %>% unique
+
+# Load ARG master file from CARD database
+card = readxl::read_xlsx('Data Files/ARG_master.xlsx') %>% 
+  rename(MDB_ID = SampleID) %>% 
+  select(c(Protein_Accession:Resistance_Mechanism)) %>% 
+  group_by(MDB_ID) %>% 
+  summarize(Count=sum(Count)) %>% ungroup
+
+temp = temp2 %>% left_join(card) %>% filter(Day=='Day 28')
+
+# Stats
+
+df.stats = temp %>%  
+  group_by(Diet) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup
+
+df.stats = df.stats %>% 
+  mutate(label.lm = paste(Diet,': \u03C1=',as.character(round(estimate,2)),', p=',signif(p.value,2),sep='')) %>%
+  mutate(label.con = ifelse(Diet=='CON',label.lm,NA),
+         label.lm = ifelse(Diet=='LM',label.lm,NA))
+
+#############
+p=temp %>% filter(Day=='Day 28') %>% 
+  ggplot(aes(Abundance,Count,fill=Diet,col=Diet)) +
+  geom_point() + 
+  geom_smooth(method='lm') +
+  theme_classic(base_size=16) +
+  xlab('Oxidative Stress Genes (Rel. Ab.)') +
+  ylab('Total ARGs (RPKM)') +
+  geom_text(aes(x=2800/1e6,y=700,label=label.lm),
+            data = df.stats, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=2800/1e6,y=600,label=label.con),
+            data = df.stats, size = 4.5,lineheight=0.8,hjust=0)
+data_6b = p$data %>% select(Diet,Abundance,Count) %>%
+  rename(total_args = Count, ox_stress_genes = Abundance)
+ggsave('Plots/Functional/Fig 6b - oxstress vs args.png', height = 5, width =7)
+```
+
+# Fig 6c - Dot Plot of ARGs vs Ox Stress
+
+```{r Load SEED Data}
+# Load data
+df = read.csv("Data Files/SEED_abundances.csv")
+
+# Taxonomy
+t = df %>% select(contains('Subsystem'),Function) %>% 
+  mutate(OTU = paste(Subsystem.Level.1,Subsystem.Level.2,Subsystem.Level.3, Function,sep='|')) %>% 
+  mutate_all(function(x)str_replace_all(x,"'",'.')) %>% 
+  column_to_rownames('OTU') %>% as.matrix %>% tax_table()
+
+# Abundance
+o = df %>% select(-all_of(colnames(t))) %>% as.matrix %>% `rownames<-`(rownames(t))
+
+# Convert to Rel ab
+cs = colSums(o) # Denominator
+o2 = (t(o)/cs) %>% t()
+
+# Sample data
+s = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$Sample) %>% 
+  mutate(Mouse = str_remove(Sample,'_D0') %>% str_remove('_D28'))
+
+# Phyloseq object
+ps = phyloseq(sample_data(s),otu_table(o2,taxa_are_rows=T),t)
+ps@sam_data$Group = factor(ps@sam_data$Group, levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
+
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+```
+
+```{r Prep SEED Data}
+temp1 = ps %>% subset_taxa(Subsystem.Level.3=='Oxidative stress') %>%  
+  tax_glom('Subsystem.Level.3') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28') %>% mutate(label = 'Oxidative stress') %>% 
+  select(Sample,Day,Diet,Group,Abundance,label)
+
+temp2 = ps %>% subset_taxa(Subsystem.Level.3=='Oxygen stress response / Human gut microbiome') %>%  
+  tax_glom('Subsystem.Level.3') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28') %>% mutate(label = 'Oxygen stress response /\nHuman gut microbiome') %>% 
+  select(Sample,Day,Diet,Group,Abundance,label)
+
+temp3 = ps %>% subset_taxa(Subsystem.Level.3 == 'Regulation of Oxidative Stress Response') %>%   
+  tax_glom('Subsystem.Level.3') %>% 
+  psmelt() %>% 
+  filter(Day=='Day 28') %>% mutate(label = 'Regulation of\nOxidative Stress Response') %>% 
+  select(Sample,Day,Diet,Group,Abundance,label)
+
+temp = rbind(temp1,temp2,temp3)
+
+lm_order = temp %>% filter(Diet=='LM') %>% 
+  group_by(label) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+```
+
+```{r Prep CARD Data}
+getwd()
+card = readxl::read_xlsx('Data Files/ARG_master.xlsx') %>% 
+  rename(MDB_ID = SampleID) %>% 
+  select(c(Protein_Accession:Resistance_Mechanism))
+
+# Add sample info
+card = card %>% left_join(sample_data(ps) %>% as.data.frame)
+
+# 30% prevalence filter
+prevfilter = card %>% filter(Day == 'Day 28') %>% 
+  group_by(Sample,ARO_Accession) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Count = Count>0) %>% 
+  group_by(ARO_Accession) %>% 
+  summarize(Count = sum(Count)/20) %>% ungroup() %>% 
+  filter(Count>0.3)
+card = card %>% filter(ARO_Accession %in% prevfilter$ARO_Accession)
+```
+
+## Correlate ARGs with SEED
+
+```{r Combine}
+df = left_join(temp,card)
+```
+
+```{r Run stats and plot}
+# CON
+df.stats.con = df %>% filter(Diet=='CON',Day=='Day 28') %>% 
+  group_by(label,ARO_Accession,Resistance_Mechanism) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup %>% group_by(label) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'CON')
+# LM
+df.stats.lm = df %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(label,ARO_Accession,Resistance_Mechanism) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup %>% group_by(label) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'LM')
+
+df.stats = rbind(df.stats.con,df.stats.lm) %>% filter(!is.na(estimate)) %>% 
+  mutate(label.lm = paste(Group,': \u03C1=',as.character(round(estimate,2)),', q=',signif(qval,2),sep='')) %>%
+  mutate(label.con = ifelse(Group=='CON',label.lm,NA),
+         label.lm = ifelse(Group=='LM',label.lm,NA)) %>% 
+  arrange(estimate) %>% 
+  mutate(ARO_Accession = as.character(ARO_Accession))
+
+order = df.stats %>% filter(Group=='LM',label=='Regulation of\nOxidative Stress Response') %>% 
+  arrange(-estimate)
+df.stats = df.stats %>% mutate(ARO_Accession = factor(ARO_Accession, levels = order$ARO_Accession))
+
+# Arrange significance ~~~~~~~~~~~~~
+p=df.stats %>% 
+  mutate(Resistance_Mechanism = str_wrap(Resistance_Mechanism,25) %>% str_to_title) %>% 
+  rename("Rho" = estimate) %>% 
+  mutate(Qval = ifelse(qval>0.05,'',
+                      ifelse(qval>0.01,'*',
+                             ifelse(qval>0.001,'**',
+                                    ifelse(qval<=0.001,'***',''))))) %>% 
+  ggplot(aes(label,ARO_Accession,col = Rho)) +
+  geom_point(size =14) +
+  theme_classic(base_size = 14) +
+  scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
+  geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
+  ylab('ARG (ARO Accession)') + xlab(NULL) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  facet_grid(cols = vars(Group),rows = vars(Resistance_Mechanism), scales = 'free',space = 'free') +
+  theme(strip.text.y.right = element_text(angle = 0))
+data_6c = p$data %>% select(label,Resistance_Mechanism, ARO_Accession,Group,Rho,qval,label.lm,label.con)
+ggsave('Plots/Functional/Fig 6c - ARG_vs_ox_stress_dotplot.jpeg',height=12,width=7)
+```
+
+```{r Save stats}
+write.csv(df.stats,'Results Files/Functional/Fig 6c ARG vs Ox Stress Statistics.csv',row.names = F)
+```
+
+# Fig 6d - Dot Plot of Ox Stress vs Opp Bacteria
+
+```{r Load SEED Data}
+# Load data
+df = read.csv("Data Files/SEED_abundances.csv")
+
+# Taxonomy
+t = df %>% select(contains('Subsystem'),Function) %>% 
+  mutate(OTU = paste(Subsystem.Level.1,Subsystem.Level.2,Subsystem.Level.3, Function,sep='|')) %>% 
+  mutate_all(function(x)str_replace_all(x,"'",'.')) %>% 
+  column_to_rownames('OTU') %>% as.matrix %>% tax_table()
+
+# Abundance
+o = df %>% select(-all_of(colnames(t))) %>% as.matrix %>% `rownames<-`(rownames(t))
+
+# Convert to rel ab
+cs = colSums(o) # Denominator
+o2 = (t(o)/cs) %>% t()
+
+# Sample data
+s = read.csv('Data Files/metadata.csv') %>% `rownames<-`(.$Sample) %>% 
+  mutate(Mouse = str_remove(Sample,'_D0') %>% str_remove('_D28'))
+
+# Phyloseq object
+ps = phyloseq(sample_data(s),otu_table(o2,taxa_are_rows=T),t)
+ps@sam_data$Group = factor(ps@sam_data$Group, levels = c('CON Day 0','LM Day 0','CON Day 28','LM Day 28'))
+
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+
+# SEED Maaslin2 results
+maas = readxl::read_xlsx('Results Files/Functional/Maaslin2_SEED_D28.xlsx',sheet = 'All Results')
+```
+
+```{r Prep Oxidative stress}
+to_test = c('Oxidative stress','Oxygen stress response / Human gut microbiome',
+            'Protection from Reactive Oxygen Species','Regulation of Oxidative Stress Response')
+temp = ps %>% subset_taxa(Subsystem.Level.3 %in% to_test) %>% 
+  tax_glom('Subsystem.Level.3') %>% 
+  psmelt()
+
+pval = maas %>% filter(Level=='SL3', Subsystem.Level.3 %in% to_test) %>% 
+  select(Subsystem.Level.3,qval) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"*",
+                      ifelse(qval>0.001,'**',ifelse(qval>0.0001,'***','****'))))) %>% 
+  filter(symb !='')
+
+temp = temp %>% filter(Subsystem.Level.3 %in% pval$Subsystem.Level.3)
+
+lm_order = temp %>% filter(Day == 'Day 28', Diet=='LM') %>% 
+  group_by(Sample,Subsystem.Level.3) %>% 
+  summarize(Abundance = sum(Abundance)) %>% ungroup() %>% 
+  group_by(Subsystem.Level.3) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Filter for day 28
+temp = temp %>% filter(Day == 'Day 28')
+```
+
+## Correlate pathobionts with ARG mechanisms
+
+```{r Prep Pathobionts}
+# Genus level:
+path.genus = c('Streptococcus','Staphylococcus','Enterococcus','Escherichia','Shigella','Haemophilus','Campylobacter','Klebsiella')
+# Species level:
+# NOTE: phocaeicola vulgatus = bacteroides vulgatus
+path.species = c('Phocaeicola vulgatus', 'Prevotella copri','Bacteroides fragilis')
+  
+path = readRDS('Data Files/bacterial_phyloseq.rds')
+path.rel = path %>% microbiome::transform('compositional')
+
+# Extract otu data into table
+p = path.rel %>% tax_glom('Phylum') %>% subset_taxa(Phylum == 'Proteobacteria') %>% 
+    psmelt() %>% select(-OTU) %>% select(-Kingdom) %>% rename(`Opportunistic\nBacteria` = Phylum)
+f = path.rel %>% tax_glom('Family') %>% subset_taxa(Family == 'Enterobacteriaceae') %>% 
+    psmelt() %>% select(-OTU) %>% select(-c(Kingdom:Order)) %>% rename(`Opportunistic\nBacteria` = Family)
+g = path.rel %>% subset_taxa(Genus %in% path.genus) %>% tax_glom('Genus') %>% 
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
+sp = path.rel %>% subset_taxa(Species %in% path.species) %>% tax_glom('Species') %>% 
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
+
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Bacteriome/Fig. 1 Supplement - Bacterial Maaslin2.xlsx',sheet='All Results') %>%
+  filter((Level=='Genus' & Genus %in% path.genus) | (Level=='Species' & Species %in% path.species)) %>% 
+  mutate(`Opportunistic\nBacteria` = ifelse(is.na(Species),Genus,Species)) %>% 
+  select(`Opportunistic\nBacteria`, qval) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+
+# sample-specific data with qvals
+path=rbind(g,sp) %>% left_join(maas)
+
+# Remove ns `Opportunistic\nBacteria`
+path = path %>% filter(symb != '')
+
+taxa = full_join(path,p) %>% 
+  full_join(f) %>% 
+  filter(Day=="Day 28")
+
+taxa$`Opportunistic\nBacteria` = factor(taxa$`Opportunistic\nBacteria`, levels = c('Proteobacteria','Enterobacteriaceae',unique(path$`Opportunistic\nBacteria`)))
+```
+
+## Correlate pathobionts with oxidative stress genes
+
+```{r Combine}
+temp = temp %>% select(Sample, Abundance, Diet, Day, Group, Subsystem.Level.3) %>% 
+  rename(ab_ox = Abundance)
+taxa = taxa %>% select(Sample, Abundance, Diet, Day, Group, `Opportunistic\nBacteria`) %>% 
+  rename(ab_tax = Abundance)
+
+df = left_join(taxa,temp)
+
+# Categorize pathobionts
+df$cat = sapply(df$`Opportunistic\nBacteria`,function(x)ifelse(x %in% c('Staphylococcus','Streptococcus','Prevotella copri'),'Down','Up'))
+```
+
+```{r Run stats and plot}
+# CON
+df.stats.con = df %>% filter(Diet=='CON',Day=='Day 28') %>% 
+  group_by(Subsystem.Level.3,`Opportunistic\nBacteria`,cat) %>% 
+  group_modify(~cor.test(.$ab_ox,.$ab_tax,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup %>% group_by(Subsystem.Level.3) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'CON')
+# LM
+df.stats.lm = df %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(Subsystem.Level.3,`Opportunistic\nBacteria`,cat) %>% 
+  group_modify(~cor.test(.$ab_ox,.$ab_tax,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  ungroup %>% group_by(Subsystem.Level.3) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'LM')
+
+df.stats = rbind(df.stats.con,df.stats.lm) %>% filter(!is.na(estimate)) %>% 
+  mutate(label.lm = paste(Group,': \u03C1=',as.character(round(estimate,2)),', q=',signif(qval,2),sep='')) %>%
+  mutate(label.con = ifelse(Group=='CON',label.lm,NA),
+         label.lm = ifelse(Group=='LM',label.lm,NA))
+
+# Arrange significance ~~~~~~~~~~~~~
+temp = df.stats %>% filter(Group == 'CON',Subsystem.Level.3=='Oxidative stress', !(`Opportunistic\nBacteria` %in% c('Proteobacteria','Enterobacteriaceae'))) %>% 
+  arrange(estimate)
+df.stats$`Opportunistic\nBacteria` = factor(df.stats$`Opportunistic\nBacteria`, levels = c('Proteobacteria','Enterobacteriaceae',as.character(temp$`Opportunistic\nBacteria`)))
+
+df.stats$Subsystem.Level.3[df.stats$Subsystem.Level.3=='Oxygen stress response / Human gut microbiome'] = 'Oxygen stress response/\nHuman gut microbiome'
+df.stats$Subsystem.Level.3[df.stats$Subsystem.Level.3=='Regulation of Oxidative Stress Response'] = 'Regulation of\nOxidative Stress Response'
+
+p=df.stats %>% 
+  rename("Rho" = estimate) %>% 
+  mutate(Qval = ifelse(qval>0.05,'',
+                      ifelse(qval>0.01,'*',
+                             ifelse(qval>0.001,'**',
+                                    ifelse(qval<=0.001,'***',''))))) %>% 
+  ggplot(aes(Subsystem.Level.3,`Opportunistic\nBacteria`,col = Rho)) +
+  geom_point(size =14) +
+  theme_classic(base_size = 14) +
+  scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
+  geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
+  ylab(NULL) + xlab(NULL) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  facet_grid(cols = vars(Group),rows = vars(cat), scales = 'free',space = 'free')
+
+data_6d = p$data %>% select(Subsystem.Level.3,`Opportunistic\nBacteria`,Rho,qval,label.lm,label.con)
+ggsave('Plots/Functional/Fig 6d - Opportunistic Bacteria vs Ox Stress.jpeg',height=8,width=6)
+```
+
+```{r Save stats}
+write.csv(df.stats,'Results Files/Functional/Fig 6d ARG vs Opp Bacteria Statistics.csv',row.names = F)
+```
+
+############
+
+```{r Save Source Files}
+L = list('Fig 6a' = data_6a,
+         'Fig 6b' = data_6b, 
+         'Fig 6c' = data_6c,
+         'Fig 6d' = data_6d)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 6.xlsx')
+```
+

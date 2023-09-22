@@ -1,0 +1,122 @@
+"Subsystem.Level.3","Opportunistic
+Bacteria","cat","statistic","p.value","estimate","qval","Group","label.lm","label.con"
+"Oxidative stress","Proteobacteria","Up",106,0.312800267381167,0.357575757575757,0.938400802143502,"CON",NA,"CON: ρ=0.36, q=0.94"
+"Oxidative stress","Enterobacteriaceae","Up",50,0.0311410954595681,0.696969696969697,0.186846572757409,"CON",NA,"CON: ρ=0.7, q=0.19"
+"Oxidative stress","Klebsiella","Up",88,0.178219329270541,0.466666666666667,0.712877317082166,"CON",NA,"CON: ρ=0.47, q=0.71"
+"Oxidative stress","Enterococcus","Up",162,0.972841176143636,0.0181818181818182,0.972841176143636,"CON",NA,"CON: ρ=0.02, q=0.97"
+"Oxidative stress","Streptococcus","Down",134,0.607566897460635,0.187878787878788,0.972696920676128,"CON",NA,"CON: ρ=0.19, q=0.97"
+"Oxidative stress","Staphylococcus","Down",174,0.891638843953117,-0.0545454545454545,0.972696920676128,"CON",NA,"CON: ρ=-0.05, q=0.97"
+"Oxidative stress","Campylobacter","Up",138,0.656721421523199,0.163636363636364,0.972696920676128,"CON",NA,"CON: ρ=0.16, q=0.97"
+"Oxidative stress","Escherichia","Up",210,0.448272158936988,-0.272727272727273,0.972696920676128,"CON",NA,"CON: ρ=-0.27, q=0.97"
+"Oxidative stress","Haemophilus","Up",16,0.000880224994754143,0.903030303030303,0.0105626999370497,"CON",NA,"CON: ρ=0.9, q=0.011"
+"Oxidative stress","Shigella","Up",136.27718676731,0.630536075556976,0.174077655955698,0.972696920676128,"CON",NA,"CON: ρ=0.17, q=0.97"
+"Oxidative stress","Phocaeicola vulgatus","Up",152,0.83800409458326,0.0787878787878788,0.972696920676128,"CON",NA,"CON: ρ=0.08, q=0.97"
+"Oxidative stress","Prevotella copri","Down",148,0.785018103976205,0.103030303030303,0.972696920676128,"CON",NA,"CON: ρ=0.1, q=0.97"
+"Oxygen stress response/
+Human gut microbiome","Proteobacteria","Up",216,0.387054968154447,-0.309090909090909,0.864753528804526,"CON",NA,"CON: ρ=-0.31, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Enterobacteriaceae","Up",232,0.247370787611931,-0.406060606060606,0.864753528804526,"CON",NA,"CON: ρ=-0.41, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Klebsiella","Up",188,0.707203785571239,-0.139393939393939,0.864753528804526,"CON",NA,"CON: ρ=-0.14, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Enterococcus","Up",132,0.583540584566421,0.2,0.864753528804526,"CON",NA,"CON: ρ=0.2, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Streptococcus","Down",180,0.811416953056796,-0.0909090909090909,0.864753528804526,"CON",NA,"CON: ρ=-0.09, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Staphylococcus","Down",198,0.58354058456642,-0.2,0.864753528804526,"CON",NA,"CON: ρ=-0.2, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Campylobacter","Up",188,0.707203785571239,-0.139393939393939,0.864753528804526,"CON",NA,"CON: ρ=-0.14, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Escherichia","Up",122,0.469675250206491,0.260606060606061,0.864753528804526,"CON",NA,"CON: ρ=0.26, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Haemophilus","Up",276,0.0393814092829061,-0.672727272727273,0.472576911394873,"CON",NA,"CON: ρ=-0.67, q=0.47"
+"Oxygen stress response/
+Human gut microbiome","Shigella","Up",212.871355387817,0.416120253507059,-0.29012942659283,0.864753528804526,"CON",NA,"CON: ρ=-0.29, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Phocaeicola vulgatus","Up",154,0.864753528804526,0.0666666666666667,0.864753528804526,"CON",NA,"CON: ρ=0.07, q=0.86"
+"Oxygen stress response/
+Human gut microbiome","Prevotella copri","Down",152,0.83800409458326,0.0787878787878788,0.864753528804526,"CON",NA,"CON: ρ=0.08, q=0.86"
+"Regulation of
+Oxidative Stress Response","Proteobacteria","Up",278,0.0350915379341638,-0.684848484848485,0.176106211391371,"CON",NA,"CON: ρ=-0.68, q=0.18"
+"Regulation of
+Oxidative Stress Response","Enterobacteriaceae","Up",274,0.0440265528478426,-0.660606060606061,0.176106211391371,"CON",NA,"CON: ρ=-0.66, q=0.18"
+"Regulation of
+Oxidative Stress Response","Klebsiella","Up",176,0.864753528804526,-0.0666666666666667,0.972841176143636,"CON",NA,"CON: ρ=-0.07, q=0.97"
+"Regulation of
+Oxidative Stress Response","Enterococcus","Up",162,0.972841176143636,0.0181818181818182,0.972841176143636,"CON",NA,"CON: ρ=0.02, q=0.97"
+"Regulation of
+Oxidative Stress Response","Streptococcus","Down",206,0.491555497342584,-0.248484848484848,0.972841176143636,"CON",NA,"CON: ρ=-0.25, q=0.97"
+"Regulation of
+Oxidative Stress Response","Staphylococcus","Down",160,0.94570980835199,0.0303030303030303,0.972841176143636,"CON",NA,"CON: ρ=0.03, q=0.97"
+"Regulation of
+Oxidative Stress Response","Campylobacter","Up",244,0.166058037179348,-0.478787878787879,0.498174111538044,"CON",NA,"CON: ρ=-0.48, q=0.5"
+"Regulation of
+Oxidative Stress Response","Escherichia","Up",190,0.681807643477163,-0.151515151515151,0.972841176143636,"CON",NA,"CON: ρ=-0.15, q=0.97"
+"Regulation of
+Oxidative Stress Response","Haemophilus","Up",282,0.0275141191111855,-0.709090909090909,0.176106211391371,"CON",NA,"CON: ρ=-0.71, q=0.18"
+"Regulation of
+Oxidative Stress Response","Shigella","Up",193.72281323269,0.630536075556976,-0.174077655955698,0.972841176143636,"CON",NA,"CON: ρ=-0.17, q=0.97"
+"Regulation of
+Oxidative Stress Response","Phocaeicola vulgatus","Up",174,0.891638843953117,-0.0545454545454545,0.972841176143636,"CON",NA,"CON: ρ=-0.05, q=0.97"
+"Regulation of
+Oxidative Stress Response","Prevotella copri","Down",138,0.656721421523199,0.163636363636364,0.972841176143636,"CON",NA,"CON: ρ=0.16, q=0.97"
+"Oxidative stress","Proteobacteria","Up",70,0.0877680432613642,0.575757575757576,0.351072173045457,"LM","LM: ρ=0.58, q=0.35",NA
+"Oxidative stress","Enterobacteriaceae","Up",70,0.0877680432613642,0.575757575757576,0.351072173045457,"LM","LM: ρ=0.58, q=0.35",NA
+"Oxidative stress","Klebsiella","Up",86,0.166058037179348,0.478787878787879,0.373763099297683,"LM","LM: ρ=0.48, q=0.37",NA
+"Oxidative stress","Enterococcus","Up",150,0.811416953056797,0.0909090909090909,0.972696920676128,"LM","LM: ρ=0.09, q=0.97",NA
+"Oxidative stress","Streptococcus","Down",82,0.14336680194002,0.503030303030303,0.373763099297683,"LM","LM: ρ=0.5, q=0.37",NA
+"Oxidative stress","Staphylococcus","Down",162,0.972841176143636,0.0181818181818182,0.972841176143636,"LM","LM: ρ=0.02, q=0.97",NA
+"Oxidative stress","Campylobacter","Up",236,0.218028474590315,-0.43030303030303,0.373763099297683,"LM","LM: ρ=-0.43, q=0.37",NA
+"Oxidative stress","Escherichia","Up",94,0.218028474590315,0.43030303030303,0.373763099297683,"LM","LM: ρ=0.43, q=0.37",NA
+"Oxidative stress","Haemophilus","Up",156,0.891638843953118,0.0545454545454545,0.972696920676128,"LM","LM: ρ=0.05, q=0.97",NA
+"Oxidative stress","Shigella","Up",66,0.0731198750392827,0.6,0.351072173045457,"LM","LM: ρ=0.6, q=0.35",NA
+"Oxidative stress","Phocaeicola vulgatus","Up",182,0.785018103976204,-0.103030303030303,0.972696920676128,"LM","LM: ρ=-0.1, q=0.97",NA
+"Oxidative stress","Prevotella copri","Down",190,0.681807643477163,-0.151515151515151,0.972696920676128,"LM","LM: ρ=-0.15, q=0.97",NA
+"Oxygen stress response/
+Human gut microbiome","Proteobacteria","Up",100,0.26288678352469,0.393939393939394,0.525773567049379,"LM","LM: ρ=0.39, q=0.53",NA
+"Oxygen stress response/
+Human gut microbiome","Enterobacteriaceae","Up",100,0.26288678352469,0.393939393939394,0.525773567049379,"LM","LM: ρ=0.39, q=0.53",NA
+"Oxygen stress response/
+Human gut microbiome","Klebsiella","Up",112,0.367683999158498,0.321212121212121,0.551525998737747,"LM","LM: ρ=0.32, q=0.55",NA
+"Oxygen stress response/
+Human gut microbiome","Enterococcus","Up",16,0.000880224994754143,0.903030303030303,0.0105626999370497,"LM","LM: ρ=0.9, q=0.011",NA
+"Oxygen stress response/
+Human gut microbiome","Streptococcus","Down",106,0.312800267381167,0.357575757575757,0.536229029796287,"LM","LM: ρ=0.36, q=0.54",NA
+"Oxygen stress response/
+Human gut microbiome","Staphylococcus","Down",64,0.0664691374895167,0.612121212121212,0.263304129784093,"LM","LM: ρ=0.61, q=0.26",NA
+"Oxygen stress response/
+Human gut microbiome","Campylobacter","Up",172,0.918633282432669,-0.0424242424242424,0.918633282432669,"LM","LM: ρ=-0.04, q=0.92",NA
+"Oxygen stress response/
+Human gut microbiome","Escherichia","Up",124,0.491555497342584,0.248484848484848,0.616677991468723,"LM","LM: ρ=0.25, q=0.62",NA
+"Oxygen stress response/
+Human gut microbiome","Haemophilus","Up",204,0.513898326223936,-0.236363636363636,0.616677991468723,"LM","LM: ρ=-0.24, q=0.62",NA
+"Oxygen stress response/
+Human gut microbiome","Shigella","Up",70,0.0877680432613642,0.575757575757576,0.263304129784093,"LM","LM: ρ=0.58, q=0.26",NA
+"Oxygen stress response/
+Human gut microbiome","Phocaeicola vulgatus","Up",134,0.607566897460635,0.187878787878788,0.662800251775238,"LM","LM: ρ=0.19, q=0.66",NA
+"Oxygen stress response/
+Human gut microbiome","Prevotella copri","Down",66,0.0731198750392827,0.6,0.263304129784093,"LM","LM: ρ=0.6, q=0.26",NA
+"Regulation of
+Oxidative Stress Response","Proteobacteria","Up",2.00000000000003,0,0.987878787878788,0,"LM","LM: ρ=0.99, q=0",NA
+"Regulation of
+Oxidative Stress Response","Enterobacteriaceae","Up",2.00000000000003,0,0.987878787878788,0,"LM","LM: ρ=0.99, q=0",NA
+"Regulation of
+Oxidative Stress Response","Klebsiella","Up",16,0.000880224994754143,0.903030303030303,0.00352089997901657,"LM","LM: ρ=0.9, q=0.0035",NA
+"Regulation of
+Oxidative Stress Response","Enterococcus","Up",110,0.348846243872153,0.333333333333333,0.52326936580823,"LM","LM: ρ=0.33, q=0.52",NA
+"Regulation of
+Oxidative Stress Response","Streptococcus","Down",178,0.83800409458326,-0.0787878787878788,0.83800409458326,"LM","LM: ρ=-0.08, q=0.84",NA
+"Regulation of
+Oxidative Stress Response","Staphylococcus","Down",194,0.631967363906088,-0.175757575757576,0.758360836687306,"LM","LM: ρ=-0.18, q=0.76",NA
+"Regulation of
+Oxidative Stress Response","Campylobacter","Up",300,0.0068111327718268,-0.818181818181818,0.0163467186523843,"LM","LM: ρ=-0.82, q=0.016",NA
+"Regulation of
+Oxidative Stress Response","Escherichia","Up",20,0.0019770587107552,0.878787878787879,0.00593117613226561,"LM","LM: ρ=0.88, q=0.0059",NA
+"Regulation of
+Oxidative Stress Response","Haemophilus","Up",238,0.204200583289326,-0.442424242424242,0.350058142781701,"LM","LM: ρ=-0.44, q=0.35",NA
+"Regulation of
+Oxidative Stress Response","Shigella","Up",34,0.0098441361663116,0.793939393939394,0.0196882723326232,"LM","LM: ρ=0.79, q=0.02",NA
+"Regulation of
+Oxidative Stress Response","Phocaeicola vulgatus","Up",126,0.513898326223936,0.236363636363636,0.685197768298581,"LM","LM: ρ=0.24, q=0.69",NA
+"Regulation of
+Oxidative Stress Response","Prevotella copri","Down",152,0.83800409458326,0.0787878787878788,0.83800409458326,"LM","LM: ρ=0.08, q=0.84",NA

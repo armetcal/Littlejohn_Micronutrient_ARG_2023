@@ -1,5 +1,5 @@
 ---
-title: "Fig. 5 - Resistome"
+title: "Fig. 5bcde - Resistome"
 author: "Avril Metcalfe-Roach"
 date: "`r Sys.Date()`"
 output: html_document
@@ -33,7 +33,7 @@ qval.drug = readxl::read_xlsx('Results Files/Functional/Fig. 5 Supplement - CARD
 # Fig. 5b - Total ARGs
 
 ```{r}
-psm %>% filter(Day == 'Day 28') %>% 
+p=psm %>% filter(Day == 'Day 28') %>% 
   group_by(Sample,Diet) %>% 
   summarize(Count = sum(Count)) %>% ungroup() %>% 
   ggplot(aes(Diet,Count, fill = Diet)) +
@@ -43,14 +43,11 @@ psm %>% filter(Day == 'Day 28') %>%
   theme(legend.position = 'none') +
   stat_compare_means(comparisons = list(c('CON','LM')),size = 5) +
   xlab(NULL) + ylab('Total ARGs (RPKM)')
+data_5b = p$data %>% select(Diet,Count)
 ggsave('Plots/Functional/Fig. 5b - Total ARGs.png',height=5,width=4)
 ```
 
-# Fig. 5c - Heatmap
-
-Fill in - this was done by a collaborator
-
-# Fig. 5d - Mechanism Boxplots
+# Fig. 5c - Mechanism Boxplots
 
 ```{r}
 # Resistance Mechanisms with at least 30% prevalence
@@ -92,7 +89,7 @@ qvals = qval.mech %>% select(Resistance_Mechanism,qval) %>% unique %>%
                       ifelse(qval>0.001,' **',ifelse(qval>0.0001,' ***','****'))))) %>% 
   left_join(max_per_path)
 
-temp %>% 
+p=temp %>% 
   left_join(qvals) %>% 
   mutate(Resistance_Mechanism = factor(Resistance_Mechanism, levels = lm_order$Resistance_Mechanism)) %>% 
   ggplot(aes(Resistance_Mechanism,Count, fill = Diet)) +
@@ -102,11 +99,12 @@ temp %>%
   geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
   xlab(NULL) + ylab('Count (RPKM)')
+data_5c = p$data %>% select(Diet,Resistance_Mechanism,Count,qval,symb)
 
 ggsave('Plots/Functional/Fig. 5d - Resistance Mechanisms.png',height=6,width=8)
 ```
 
-# Fig. 5e - Correlations with Pathobionts
+# Fig. 5d - Correlations with Pathobionts
 
 ```{r}
 # Prep Drug Classes
@@ -252,6 +250,8 @@ p1 = temp %>%
   theme(legend.position = 'none') +
   theme(axis.text.x = element_text(angle = 35, vjust = 1, hjust=1)) +
   scale_y_log10()
+data_5d = p1$data %>% select(Diet,Drug_Class,Count,`Opportunistic\nBacteria`,Abundance) %>% 
+  rename(drugclass_count = Count, bacterial_abundance = Abundance)
 ggsave('Plots/Functional/Fig 5e - ARG Opportunistic Bacteria Scatterplots.png',height=6,width=20)
 
 
@@ -259,9 +259,9 @@ ggsave('Plots/Functional/Fig 5e - ARG Opportunistic Bacteria Scatterplots.png',h
 write.csv(df.stats,'Results Files/Functional/Opportunistic_Bacteria_vs_ARG_Drug_Classes_Spearman.csv',row.names = F)
 ```
 
-# Fig. 5f - Misc
+# Fig. 5e - Total ARGS vs Opp Bac
 
-```{r Total ARG vs Total Path}
+```{r}
 # Combine data
 temp = psm %>% filter(Day == 'Day 28') %>% 
   group_by(Sample,Diet) %>% 
@@ -281,7 +281,7 @@ annotations = temp %>% group_by(Diet) %>%
          label.lm = ifelse(Diet=='LM',label.lm,NA))
 
 # Plot
-temp %>% 
+p=temp %>% 
   ggplot(aes(Abundance,Count, fill = Diet,col=Diet)) +
   geom_point() +
   geom_smooth(method='lm') +
@@ -292,8 +292,21 @@ temp %>%
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
   xlab('Total Opportunistic Bacteria (Rel Ab)') +
   ylab('Total ARGs (RPKM)') + theme(legend.position = 'none')
+data_5e = p$data %>% select(Diet,Count,Abundance) %>% 
+  rename(drugclass_count = Count, bacterial_abundance = Abundance)
 ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png',height = 5, width = 5)
 ```
+
+```{r Save}
+L = list('Fig 5b' = data_5b, 
+         'Fig 5c' = data_5c,
+         'Fig 5d' = data_5d,
+         'Fig 5e' = data_5e)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 5.xlsx')
+```
+
+
+#############################################
 
 ```{r Antibiotic efflux vs Enterococcus}
 temp = psm %>% filter(Day == 'Day 28') %>% 
@@ -321,6 +334,7 @@ temp %>%
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
   geom_text(aes(x=0,y=680,label=label.con),
             data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  scale_y_log10() +
   xlab('Total Opportunistic Bacteria (Rel Ab)') +
   ylab('Total ARGs (RPKM)') + theme(legend.position = 'none')
 ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png',height = 5, width = 5)
@@ -329,26 +343,26 @@ ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png
 
 ```{r}
   
-# # Arrange significance ~~~~~~~~~~~~~
-# temp = df.stats %>% filter(Group == 'CON',Drug_Class=='Peptide Antibiotic') %>% 
-#   arrange(estimate)
-# df.stats$`Opportunistic\nBacteria` = factor(df.stats$`Opportunistic\nBacteria`, levels = temp$`Opportunistic\nBacteria`)
-# 
-# df.stats %>% 
-#   mutate(Drug_Class = Drug_Class %>% str_replace_all('\n',' ') %>% str_replace_all(';',', ') %>% str_wrap(50)) %>% 
-#   rename("Rho" = estimate) %>% 
-#   mutate(Qval = ifelse(qval>0.05,'',
-#                       ifelse(qval>0.01,'*',
-#                              ifelse(qval>0.001,'**',
-#                                     ifelse(qval<=0.001,'***',''))))) %>% 
-#   ggplot(aes(Drug_Class,`Opportunistic\nBacteria`,col = Rho)) +
-#   geom_point(size =14) +
-#   theme_classic(base_size = 14) +
-#   scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
-#   geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
-#   ylab(NULL) + xlab(NULL) +
-#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-#   facet_grid(cols = vars(Group),rows = vars(cat),  scales = 'free',space = 'free')
-# ggsave('Plots/Functional/CARD/P4_Opportunistic_Bacteria_Heatmap_drug_class.jpeg',height=10,width=15)
+# Arrange significance ~~~~~~~~~~~~~
+temp = df.stats %>% filter(Group == 'CON',Drug_Class=='Peptide Antibiotic') %>%
+  arrange(estimate)
+df.stats$`Opportunistic\nBacteria` = factor(df.stats$`Opportunistic\nBacteria`, levels = temp$`Opportunistic\nBacteria`)
+
+df.stats %>%
+  mutate(Drug_Class = Drug_Class %>% str_replace_all('\n',' ') %>% str_replace_all(';',', ') %>% str_wrap(50)) %>%
+  rename("Rho" = estimate) %>%
+  mutate(Qval = ifelse(qval>0.05,'',
+                      ifelse(qval>0.01,'*',
+                             ifelse(qval>0.001,'**',
+                                    ifelse(qval<=0.001,'***',''))))) %>%
+  ggplot(aes(Drug_Class,`Opportunistic\nBacteria`,col = Rho)) +
+  geom_point(size =14) +
+  theme_classic(base_size = 14) +
+  scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
+  geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
+  ylab(NULL) + xlab(NULL) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  facet_grid(cols = vars(Group),rows = vars(cat),  scales = 'free',space = 'free')
+ggsave('Plots/Functional/CARD/P4_Opportunistic_Bacteria_Heatmap_drug_class.jpeg',height=10,width=15)
 ```
 

@@ -1,0 +1,471 @@
+---
+title: "Fig. 5fg - Resistome"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+
+# Load ARG master file from CARD database
+card = readxl::read_xlsx('Data Files/ARG_master.xlsx') %>% 
+  rename(MDB_ID = SampleID) %>% 
+  select(c(Protein_Accession:Resistance_Mechanism))
+
+# Load phyloseq object & extract sample info
+ps = readRDS('Data Files/bacterial_phyloseq.rds')
+psm = ps %>% psmelt() %>% select(-Abundance, -OTU, -c(Kingdom:Species)) %>% 
+  unique %>% left_join(card) %>% 
+  mutate(Resistance_Mechanism = str_to_title(Resistance_Mechanism) %>% str_wrap(30)) %>% 
+  mutate(Drug_Class = str_to_title(Drug_Class) %>% str_wrap(30))
+
+# Load Maaslin2 significance levels
+qval.mech = readxl::read_xlsx('Results Files/Functional/Fig. 5 Supplement - CARD Maaslin2.xlsx',sheet='Resistance_Mechanism') %>% 
+  mutate(feature = str_sub(feature,start=3)) %>% rename(ARO_Accession = feature) %>% 
+  left_join(psm %>% select(ARO_Accession,Resistance_Mechanism) %>% unique() %>% mutate(ARO_Accession = as.character(ARO_Accession)))
+qval.drug = readxl::read_xlsx('Results Files/Functional/Fig. 5 Supplement - CARD Maaslin2.xlsx',sheet='Drug_Class') %>% 
+  mutate(feature = str_sub(feature,start=3)) %>% rename(ARO_Accession = feature) %>% 
+  left_join(psm %>% select(ARO_Accession,Drug_Class) %>% unique() %>% mutate(ARO_Accession = as.character(ARO_Accession)))
+```
+
+```{r Prep Resistance Mechanisms}
+prevfilter = psm %>% filter(Day == 'Day 28') %>% 
+  group_by(Sample,Resistance_Mechanism) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Count = Count>0) %>% 
+  group_by(Resistance_Mechanism) %>% 
+  summarize(Count = sum(Count)/20) %>% ungroup() %>% 
+  filter(Count>0.3)
+
+lm_order = psm %>% filter(Day == 'Day 28', Diet=='LM') %>% 
+  group_by(Sample,Resistance_Mechanism) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  group_by(Resistance_Mechanism) %>% 
+  summarize(Count = mean(Count)) %>% ungroup() %>% 
+  arrange(-Count) %>% 
+  filter(Resistance_Mechanism %in% prevfilter$Resistance_Mechanism)
+
+# Filter for day 28, aggregate to mechanism level
+temp = psm %>% filter(Day == 'Day 28') %>% 
+  filter(Resistance_Mechanism %in% prevfilter$Resistance_Mechanism) %>% 
+  group_by(Sample,Diet,Resistance_Mechanism) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Resistance_Mechanism = 
+           factor(Resistance_Mechanism, levels = lm_order$Resistance_Mechanism))
+
+# x and y value for significance labels
+max_per_path = temp %>% group_by(Resistance_Mechanism) %>% summarize(M = 100+max(Count)) %>% ungroup %>% 
+  mutate(Resistance_Mechanism = factor(Resistance_Mechanism, levels = lm_order$Resistance_Mechanism)) %>%
+  filter(Resistance_Mechanism %in% temp$Resistance_Mechanism) %>% droplevels() %>%
+  arrange(Resistance_Mechanism) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# All annotations
+qvals = qval.mech %>% select(Resistance_Mechanism,qval) %>% unique %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' **',ifelse(qval>0.0001,' ***','****'))))) %>% 
+  left_join(max_per_path)
+
+# Resistance Mechanisms
+df.res = psm %>% filter(Day == 'Day 28') %>% 
+  filter(Resistance_Mechanism %in% prevfilter$Resistance_Mechanism) %>% 
+  # Remove mechanisms that weren't significantly different
+  filter(Resistance_Mechanism %in% qvals$Resistance_Mechanism[qvals$qval<0.05]) %>% 
+  group_by(Sample,Diet,Resistance_Mechanism) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Resistance_Mechanism = 
+           factor(Resistance_Mechanism, levels = lm_order$Resistance_Mechanism))
+```
+
+```{r Prep `Opportunistic\nBacteria`s}
+# Genus level:
+path.genus = c('Streptococcus','Staphylococcus','Enterococcus','Escherichia','Shigella','Haemophilus','Campylobacter','Klebsiella')
+# Species level:
+# NOTE: phocaeicola vulgatus = bacteroides vulgatus
+path.species = c('Phocaeicola vulgatus', 'Prevotella copri','Bacteroides fragilis')
+  
+path = readRDS('Data Files/bacterial_phyloseq.rds')
+path.rel = path %>% microbiome::transform('compositional')
+
+# Extract otu data into table
+g = path.rel %>% subset_taxa(Genus %in% path.genus) %>% tax_glom('Genus') %>% 
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
+sp = path.rel %>% subset_taxa(Species %in% path.species) %>% tax_glom('Species') %>% 
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
+
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Bacteriome/Fig. 1 Supplement - Bacterial Maaslin2.xlsx',sheet='All Results') %>%
+  filter((Level=='Genus' & Genus %in% path.genus) | (Level=='Species' & Species %in% path.species)) %>% 
+  mutate(`Opportunistic\nBacteria` = ifelse(is.na(Species),Genus,Species)) %>% 
+  select(`Opportunistic\nBacteria`, qval) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+
+# sample-specific data with qvals
+path=rbind(g,sp) %>% left_join(maas)
+
+# Remove ns `Opportunistic\nBacteria`
+path = path %>% filter(symb != '')
+
+# Categorize `Opportunistic\nBacteria`s
+path$cat = sapply(path$`Opportunistic\nBacteria`,function(x)ifelse(x %in% c('Staphylococcus','Streptococcus','Prevotella copri'),'Down','Up'))
+
+# Combine `Opportunistic\nBacteria` and CARD data
+df = df.res %>% left_join(path %>% select(Sample, Day, Diet, Abundance, `Opportunistic\nBacteria`, cat))
+```
+
+```{r Run stats and plot}
+# CON
+df.stats.con = df %>% filter(Diet=='CON',Day=='Day 28') %>% 
+  group_by(Resistance_Mechanism,`Opportunistic\nBacteria`,cat) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  group_by(Resistance_Mechanism) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'CON')
+# LM
+df.stats.lm = df %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(Resistance_Mechanism,`Opportunistic\nBacteria`,cat) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  group_by(Resistance_Mechanism) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'LM')
+
+df.stats = rbind(df.stats.con,df.stats.lm) %>% filter(!is.na(estimate)) %>% 
+  mutate(label.lm = paste(Group,': \u03C1=',as.character(round(estimate,2)),', q=',signif(qval,2),sep='')) %>%
+  mutate(label.con = ifelse(Group=='CON',label.lm,NA),
+         label.lm = ifelse(Group=='LM',label.lm,NA))
+  
+# Arrange significance by Antibiotic Efflux ~~~~~~~~~~~~~
+temp = df.stats %>% filter(Group == 'CON',Resistance_Mechanism=='Antibiotic Efflux') %>% 
+  arrange(estimate)
+df.stats$`Opportunistic\nBacteria` = factor(df.stats$`Opportunistic\nBacteria`, levels = temp$`Opportunistic\nBacteria`)
+
+p=df.stats %>% 
+  rename("Rho" = estimate) %>% 
+  mutate(Qval = ifelse(qval>0.05,'',
+                      ifelse(qval>0.01,'*',
+                             ifelse(qval>0.001,'**',
+                                    ifelse(qval<=0.001,'***',''))))) %>% 
+  ggplot(aes(Resistance_Mechanism,`Opportunistic\nBacteria`,col = Rho)) +
+  geom_point(size =14) +
+  theme_classic(base_size = 14) +
+  scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
+  geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
+  ylab(NULL) + xlab(NULL) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  facet_grid(cols = vars(Group),rows = vars(cat),  scales = 'free',space = 'free')
+data_5f = p$data %>% select(Group,Resistance_Mechanism,`Opportunistic\nBacteria`,Rho,qval,label.con,label.lm)
+ggsave('Plots/Functional/Fig 5f - Opportunistic Bacteria Heatmap.jpeg',height=7.5,width=6)
+```
+
+```{r}
+df.sig = df.stats %>% filter(qval<0.05) %>% 
+  mutate(comparison = paste0(Resistance_Mechanism,`Opportunistic\nBacteria`))
+
+min_nonzero = min(df$Count[df$Count>0])
+
+# CON hits
+to_test = df.sig %>% filter(Group=='CON') %>% .$comparison
+  
+temp = df %>%
+  mutate(comparison = paste0(Resistance_Mechanism,`Opportunistic\nBacteria`)) %>% 
+  filter(comparison %in% to_test) %>% 
+  mutate(Count = Count + min_nonzero/2) %>% 
+  left_join(df.stats %>% select(Resistance_Mechanism,`Opportunistic\nBacteria`,Group,label.lm,label.con) %>% rename(Diet=Group))
+
+annotations = temp %>% select(Resistance_Mechanism,`Opportunistic\nBacteria`,Diet,label.lm,label.con) %>% unique
+
+p = temp %>% 
+  ggplot(aes(Abundance,Count,col=Diet,fill=Diet)) +
+  geom_point(size=1.5) +
+  geom_smooth(method='lm') +
+  geom_text(aes(x=0,y=1200,label=label.lm),
+            data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=0,y=600,label=label.con),
+            data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  theme_classic(base_size=14) +
+  xlab('Rel. Ab, Day 28') +
+  ylab('RPKM, Day 28') +
+  ggh4x::facet_nested(. ~ Resistance_Mechanism + `Opportunistic\nBacteria`,
+                      scales = 'free',space='free_y',axes='margins') +
+  theme(legend.position = 'none') +
+  scale_y_log10()
+data_5g = p$data %>% select(Diet,Resistance_Mechanism,`Opportunistic\nBacteria`,Abundance,Count) %>% 
+  rename(mechanims_count = Count, bacterial_abundance = Abundance)
+ggsave('Plots/Functional/Fig 5g - Opportunistic Bacteria CON.jpeg',height=4,width=4)
+```
+
+```{r Save}
+L = list('Fig 5f' = data_5f,
+         'Fig 5g' = data_5g)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 5fg.xlsx')
+```
+
+
+
+
+
+
+
+
+# Fig. 5d - Correlations with `Opportunistic\nBacteria`s
+
+```{r}
+# Prep Drug Classes
+
+prevfilter = psm %>% filter(Day == 'Day 28') %>% 
+  group_by(Sample,Drug_Class) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Count = Count>0) %>% 
+  group_by(Drug_Class) %>% 
+  summarize(Count = sum(Count)/20) %>% ungroup() %>% 
+  filter(Count>0.3)
+
+lm_order = psm %>% filter(Day == 'Day 28', Diet=='LM') %>% 
+  group_by(Sample,Drug_Class) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  group_by(Drug_Class) %>% 
+  summarize(Count = mean(Count)) %>% ungroup() %>% 
+  arrange(-Count) %>% 
+  filter(Drug_Class %in% prevfilter$Drug_Class)
+
+# Filter for day 28, aggregate to mechanism level
+temp = psm %>% filter(Day == 'Day 28') %>% 
+  filter(Drug_Class %in% prevfilter$Drug_Class) %>% 
+  group_by(Sample,Diet,Drug_Class) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Drug_Class = 
+           factor(Drug_Class, levels = lm_order$Drug_Class))
+
+# x and y value for significance labels
+max_per_path = temp %>% group_by(Drug_Class) %>% summarize(M = 100+max(Count)) %>% ungroup %>% 
+  mutate(Drug_Class = factor(Drug_Class, levels = lm_order$Drug_Class)) %>%
+  filter(Drug_Class %in% temp$Drug_Class) %>% droplevels() %>%
+  arrange(Drug_Class) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# All annotations
+qvals = qval.drug %>% select(Drug_Class,qval) %>% unique %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' **',ifelse(qval>0.0001,' ***','****'))))) %>% 
+  left_join(max_per_path)
+
+# Drug Classes
+df.res = psm %>% filter(Day == 'Day 28') %>% 
+  filter(Drug_Class %in% prevfilter$Drug_Class) %>% 
+  # Remove mechanisms that weren't significantly different
+  filter(Drug_Class %in% qvals$Drug_Class[qvals$qval<0.05]) %>% 
+  group_by(Sample,Diet,Drug_Class) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  mutate(Drug_Class = 
+           factor(Drug_Class, levels = lm_order$Drug_Class))
+
+# `Opportunistic\nBacteria`s of interest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Genus level:
+path.genus = c('Streptococcus','Staphylococcus','Enterococcus','Escherichia','Shigella','Haemophilus','Campylobacter','Klebsiella')
+# Species level:
+# NOTE: phocaeicola vulgatus = bacteroides vulgatus
+path.species = c('Phocaeicola vulgatus', 'Prevotella copri','Bacteroides fragilis')
+  
+path = readRDS('Data Files/bacterial_phyloseq.rds')
+path.rel = path %>% microbiome::transform('compositional')
+
+# Extract otu data into table
+g = path.rel %>% subset_taxa(Genus %in% path.genus) %>% tax_glom('Genus') %>% 
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Genus) %>% select(-OTU) %>% select(-c(Kingdom:Family))
+sp = path.rel %>% subset_taxa(Species %in% path.species) %>% tax_glom('Species') %>% 
+  psmelt() %>% rename(`Opportunistic\nBacteria` = Species) %>% select(-OTU) %>% select(-c(Kingdom:Genus))
+
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Bacteriome/Fig. 1 Supplement - Bacterial Maaslin2.xlsx',sheet='All Results') %>%
+  filter((Level=='Genus' & Genus %in% path.genus) | (Level=='Species' & Species %in% path.species)) %>% 
+  mutate(`Opportunistic\nBacteria` = ifelse(is.na(Species),Genus,Species)) %>% 
+  select(`Opportunistic\nBacteria`, qval) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+
+# sample-specific data with qvals
+path=rbind(g,sp) %>% left_join(maas)
+
+# Remove ns `Opportunistic\nBacteria`
+path = path %>% filter(symb != '')
+
+# Categorize `Opportunistic\nBacteria`s
+path$cat = sapply(path$`Opportunistic\nBacteria`,function(x)ifelse(x %in% c('Staphylococcus','Streptococcus','Prevotella copri'),'Down','Up'))
+
+# Combine `Opportunistic\nBacteria` and CARD data
+df = df.res %>% left_join(path %>% select(Sample, Day, Diet, Abundance, `Opportunistic\nBacteria`, cat))
+
+# Run Spearman correlations ~~~~~~~~~~~~~~
+
+# CON
+df.stats.con = df %>% filter(Diet=='CON',Day=='Day 28') %>% 
+  group_by(Drug_Class,`Opportunistic\nBacteria`,cat) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  group_by(Drug_Class) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'CON')
+# LM
+df.stats.lm = df %>% filter(Diet=='LM',Day=='Day 28') %>% 
+  group_by(Drug_Class,`Opportunistic\nBacteria`,cat) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  group_by(Drug_Class) %>% 
+  mutate(qval = p.adjust(p.value,method='BH')) %>% ungroup %>% 
+  mutate(Group = 'LM')
+
+df.stats = rbind(df.stats.con,df.stats.lm) %>% filter(!is.na(estimate)) %>% 
+  mutate(label.lm = paste(Group,': \u03C1=',as.character(round(estimate,2)),', q=',signif(qval,2),sep='')) %>%
+  mutate(label.con = ifelse(Group=='CON',label.lm,NA),
+         label.lm = ifelse(Group=='LM',label.lm,NA))
+
+# Plot Sig Correlations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+df.sig = df.stats %>% filter(qval<0.05) %>% 
+  mutate(comparison = paste0(Drug_Class,`Opportunistic\nBacteria`))
+
+min_nonzero = min(df$Count[df$Count>0])
+  
+temp = df %>%
+  mutate(comparison = paste0(Drug_Class,`Opportunistic\nBacteria`)) %>% 
+  filter(comparison %in% df.sig$comparison) %>% 
+  mutate(Count = Count + min_nonzero/2) %>% 
+  left_join(df.stats %>% select(Drug_Class,`Opportunistic\nBacteria`,Group,label.lm,label.con) %>% rename(Diet=Group)) %>% 
+  mutate(Drug_Class = as.character(Drug_Class)) %>% 
+  mutate(Drug_Class = str_wrap(Drug_Class, 30))
+
+annotations1 = temp %>% select(Drug_Class,`Opportunistic\nBacteria`,Diet,label.lm,label.con) %>% unique 
+
+# Wrap this name tighter for plotting
+annotations1$Drug_Class[annotations1$Drug_Class=='Diaminopyrimidine\nAntibiotic;Fluoroquinolone\nAntibiotic;Glycylcycline;Nitrofuran\nAntibiotic;Tetracycline\nAntibiotic'] = 'Diaminopyrimidine Antibiotic;\nFluoroquinolone Antibiotic;\nGlycylcycline;\nNitrofuran Antibiotic;\nTetracycline Antibiotic'
+temp$Drug_Class[temp$Drug_Class=='Diaminopyrimidine\nAntibiotic;Fluoroquinolone\nAntibiotic;Glycylcycline;Nitrofuran\nAntibiotic;Tetracycline\nAntibiotic'] = 'Diaminopyrimidine Antibiotic;\nFluoroquinolone Antibiotic;\nGlycylcycline;\nNitrofuran Antibiotic;\nTetracycline Antibiotic'
+
+p1 = temp %>%
+  ggplot(aes(Abundance,Count,col=Diet,fill=Diet)) +
+  geom_point(size=1.5) +
+  geom_smooth(method='lm') +
+  geom_text(aes(x=0,y=1200,label=label.lm),
+            data = annotations1, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=0,y=600,label=label.con),
+            data = annotations1, size = 4.5,lineheight=0.8,hjust=0) +
+  theme_classic(base_size=14) +
+  xlab('Rel. Ab, Day 28') +
+  ylab('RPKM, Day 28') +
+  ggh4x::facet_nested(. ~ Drug_Class + `Opportunistic\nBacteria`,
+                      scales = 'free',space='free_y',axes='margins') +
+  theme(legend.position = 'none') +
+  theme(axis.text.x = element_text(angle = 35, vjust = 1, hjust=1)) +
+  scale_y_log10()
+data_5d = p1$data %>% select(Diet,Drug_Class,Count,`Opportunistic\nBacteria`,Abundance) %>% 
+  rename(drugclass_count = Count, bacterial_abundance = Abundance)
+ggsave('Plots/Functional/Fig 5e - ARG Opportunistic Bacteria Scatterplots.png',height=6,width=20)
+
+
+# Save Stats
+write.csv(df.stats,'Results Files/Functional/Opportunistic_Bacteria_vs_ARG_Drug_Classes_Spearman.csv',row.names = F)
+```
+
+# Fig. 5e - Total ARGS vs Opp Bac
+
+```{r}
+# Combine data
+temp = psm %>% filter(Day == 'Day 28') %>% 
+  group_by(Sample,Diet) %>% 
+  summarize(Count = sum(Count)) %>% ungroup() %>% 
+  left_join(
+    path %>% filter(Day=='Day 28') %>% 
+      group_by(Sample,Diet,Group) %>% 
+      summarise(Abundance = sum(Abundance)) %>% ungroup()
+  )
+
+# Calculate Spearman correlations
+annotations = temp %>% group_by(Diet) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  mutate(label.lm = paste(Diet,': \u03C1=',as.character(round(estimate,2)),
+                          ', p=',signif(p.value,2),sep='')) %>%
+  mutate(label.con = ifelse(Diet=='CON',label.lm,NA),
+         label.lm = ifelse(Diet=='LM',label.lm,NA))
+
+# Plot
+p=temp %>% 
+  ggplot(aes(Abundance,Count, fill = Diet,col=Diet)) +
+  geom_point() +
+  geom_smooth(method='lm') +
+  theme_classic(base_size = 16) + 
+  geom_text(aes(x=0,y=750,label=label.lm),
+            data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=0,y=680,label=label.con),
+            data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  xlab('Total Opportunistic Bacteria (Rel Ab)') +
+  ylab('Total ARGs (RPKM)') + theme(legend.position = 'none')
+data_5e = p$data %>% select(Diet,Count,Abundance) %>% 
+  rename(drugclass_count = Count, bacterial_abundance = Abundance)
+ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png',height = 5, width = 5)
+```
+
+# Fig. 5f - Dot Plot of Opp Bac vs ARG Mechanisms
+
+```{r}
+
+```
+
+
+####
+
+```{r Antibiotic efflux vs Enterococcus}
+temp = psm %>% filter(Day == 'Day 28') %>% 
+  left_join(path) %>% 
+  filter(`Opportunistic\nBacteria`=='Enterococcus',
+         Resistance_Mechanism == 'Antibiotic Efflux') %>% 
+  group_by(Sample,Diet,Resistance_Mechanism,`Opportunistic\nBacteria`,Abundance) %>% 
+  summarize(Count=sum(Count)) %>% ungroup
+
+# Calculate Spearman correlations
+annotations = temp %>% group_by(Diet) %>% 
+  group_modify(~cor.test(.$Abundance,.$Count,method='spearman')[c("statistic","p.value","estimate")] %>% as.data.frame()) %>% 
+  mutate(label.lm = paste(Diet,': \u03C1=',as.character(round(estimate,2)),
+                          ', p=',signif(p.value,2),sep='')) %>%
+  mutate(label.con = ifelse(Diet=='CON',label.lm,NA),
+         label.lm = ifelse(Diet=='LM',label.lm,NA))
+
+# Plot
+temp %>% 
+  ggplot(aes(Abundance,Count, fill = Diet,col=Diet)) +
+  geom_point() +
+  geom_smooth(method='lm') +
+  theme_classic(base_size = 16) + 
+  geom_text(aes(x=0,y=750,label=label.lm),
+            data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  geom_text(aes(x=0,y=680,label=label.con),
+            data = annotations, size = 4.5,lineheight=0.8,hjust=0) +
+  scale_y_log10() +
+  xlab('Total Opportunistic Bacteria (Rel Ab)') +
+  ylab('Total ARGs (RPKM)') + theme(legend.position = 'none')
+ggsave('Plots/Functional/Fig. 5f - Total ARG vs Total Opportunistic Bacteria.png',height = 5, width = 5)
+```
+
+
+```{r}
+  
+# Arrange significance ~~~~~~~~~~~~~
+temp = df.stats %>% filter(Group == 'CON',Drug_Class=='Peptide Antibiotic') %>%
+  arrange(estimate)
+df.stats$`Opportunistic\nBacteria` = factor(df.stats$`Opportunistic\nBacteria`, levels = temp$`Opportunistic\nBacteria`)
+
+df.stats %>%
+  mutate(Drug_Class = Drug_Class %>% str_replace_all('\n',' ') %>% str_replace_all(';',', ') %>% str_wrap(50)) %>%
+  rename("Rho" = estimate) %>%
+  mutate(Qval = ifelse(qval>0.05,'',
+                      ifelse(qval>0.01,'*',
+                             ifelse(qval>0.001,'**',
+                                    ifelse(qval<=0.001,'***',''))))) %>%
+  ggplot(aes(Drug_Class,`Opportunistic\nBacteria`,col = Rho)) +
+  geom_point(size =14) +
+  theme_classic(base_size = 14) +
+  scale_color_gradient2(low="darkblue", high="darkred", guide="colorbar") +
+  geom_text(aes(label=Qval),size = 9, col = 'white',nudge_y = -0.15) +
+  ylab(NULL) + xlab(NULL) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  facet_grid(cols = vars(Group),rows = vars(cat),  scales = 'free',space = 'free')
+ggsave('Plots/Functional/CARD/P4_Opportunistic_Bacteria_Heatmap_drug_class.jpeg',height=10,width=15)
+```
+

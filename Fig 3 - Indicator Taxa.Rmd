@@ -113,6 +113,8 @@ p = df_ind_s_grp %>%
         axis.text.x = element_text(angle = 35, hjust = 1)) +
   scale_size(range = c(0.5, 12)) + xlab('')
 
+data_3a = p$data %>% select(-indsp)
+
 ggsave('Plots/Bacteriome/Fig. 3a - Indicator Dot Plot.png', height = 5, width = 9)
 ```
 
@@ -128,7 +130,7 @@ psg = ps %>% tax_glom('Genus') %>% microbiome::transform('compositional') %>%
   psmelt() %>% 
   filter(Genus %in% c('Corynebacterium','Klebsiella','Enterobacter'))
 
-psg %>% filter(Genus=='Corynebacterium') %>% 
+p=psg %>% filter(Genus=='Corynebacterium') %>% 
   ggplot(aes(Group, Abundance, fill = Group)) +
   geom_boxplot(outlier.shape = NA) + 
   geom_jitter(height = 0, width = 0.2) +
@@ -137,9 +139,10 @@ psg %>% filter(Genus=='Corynebacterium') %>%
   ylab('Corynebacterium (Rel Ab.)') +
   xlab(NULL) +
   theme(legend.position = 'none')
+data_3b = p$data %>% select(Sample,Diet, Day, Abundance)
 ggsave('Plots/Bacteriome/Fig. 3b - Corynebacterium.png',height = 5, width = 6)
 
-psg %>% filter(Genus=='Enterobacter') %>% 
+p=psg %>% filter(Genus=='Enterobacter') %>% 
   ggplot(aes(Group, Abundance, fill = Group)) +
   geom_boxplot(outlier.shape = NA) + 
   geom_jitter(height = 0, width = 0.2) +
@@ -148,6 +151,7 @@ psg %>% filter(Genus=='Enterobacter') %>%
   ylab('Enterobacter (Rel Ab.)') +
   xlab(NULL) +
   theme(legend.position = 'none')
+data_3c = p$data %>% select(Sample,Diet, Day, Abundance)
 ggsave('Plots/Bacteriome/Fig. 3c - Enterobacter.png',height = 5, width = 6)
 
 psg %>% filter(Genus=='Klebsiella') %>% 
@@ -159,6 +163,7 @@ psg %>% filter(Genus=='Klebsiella') %>%
   ylab('Klebsiella (Rel Ab.)') +
   xlab(NULL) +
   theme(legend.position = 'none')
+data_3d = p$data %>% select(Sample,Diet, Day, Abundance)
 ggsave('Plots/Bacteriome/Fig. 3d - Klebsiella.png',height = 5, width = 6)
 ```
 
@@ -324,12 +329,11 @@ p2 = psg %>% filter(Indicator == 'CON Day 28') %>% droplevels() %>%
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 p = ggarrange(plotlist = list(p2,p1),common.legend = T,legend = 'right', widths = c(3,5))
+data_3e_increased = p1$data %>% select(Sample,Diet,Day,Species,Abundance)
+data_3e_decreased = p2$data %>% select(Sample,Diet,Day,Species,Abundance)
 
 ggsave('Plots/Fungome/Fig. 3e - Fungal Indicator Species.png',height = 6, width = 10.5)
 ```
-
-
-
 
 # VIRUSES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -467,7 +471,21 @@ p2 = psg %>% filter(Indicator == 'CON Day 28') %>% droplevels() %>%
   scale_y_log10(expand = expansion(mult = c(0.1, 0.1))) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
+data_3f_increased = p1$data %>% select(Sample,Diet,Day,Species,Abundance)
+data_3f_decreased = p2$data %>% select(Sample,Diet,Day,Species,Abundance)
+
 p = ggarrange(plotlist = list(p2,p1),common.legend = T,legend = 'right', widths = c(2,5))
 
 ggsave('Plots/Virome/Fig. 3f - Viral Indicator Species.png',height = 6, width = 10.5)
 ```
+
+```{r}
+L = list('Fig 3a' = data_3a,
+         'Fig 3b' = data_3b, 
+         'Fig 3c' = data_3c,
+         'Fig 3d' = data_3d,
+         'Fig 3e Inc' = data_3e_increased, 'Fig 3e Dec' = data_3e_decreased,
+         'Fig 3f Inc' = data_3f_increased, 'Fig 3f Dec' = data_3f_decreased)
+writexl::write_xlsx(L,'Source Data/Source Data Fig 3.xlsx')
+```
+
