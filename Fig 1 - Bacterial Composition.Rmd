@@ -131,8 +131,7 @@ p =ggplot(df_alpha, aes(x=Diet, y=shannon)) +
       ylab('Shannon Diversity') +  xlab('') +
       facet_wrap(~Day) +
       theme(legend.position = 'none')
-data_1d = p$data %>% 
-  select(Sample,Diet,Day,shannon)
+data_1d = p$data %>% select(Sample,Diet,Day,shannon)
 
 ggsave('Plots/Bacteriome/Fig. 1d - Alpha Diversity.png',height = 3.5, width = 6)
 ```

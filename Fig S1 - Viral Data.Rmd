@@ -1,0 +1,190 @@
+---
+title: "Fungal Analysis"
+author: "Avril Metcalfe-Roach"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(phyloseq)
+library(tidyverse)
+library(ggpubr)
+library(vegan)
+library(Maaslin2)
+```
+
+# VIRAL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```{r}
+# ps output is bacterial, raw counts
+source('0. Initialize Viral Data.R')
+
+ps.rel = ps %>% microbiome::transform('compositional')
+
+# Rarefied
+set.seed(421)
+ps.rar = ps %>% transform_sample_counts(function(x)round(x,0)) %>% rarefy_even_depth()
+```
+
+# Fig S1a - Alpha Diversity
+
+```{r}
+otu = ps.rar@otu_table %>% as.matrix %>% as.data.frame
+# Use Vegan package to calculate diversity
+df_alpha <- diversity(t(otu), index='shannon', MARGIN = 1, base = exp(1)) %>%
+  as.data.frame()
+df_alpha$Sample = rownames(df_alpha)
+df_alpha = df_alpha %>% left_join(sample_data(ps.rar) %>% as.matrix() %>% 
+                                    as.data.frame %>% select(Diet, Day) %>% rownames_to_column('Sample'))
+names(df_alpha)[1] = 'shannon'
+  
+# Plot results - samples are paired
+p=ggplot(df_alpha, aes(x=Diet, y=shannon)) + 
+      geom_boxplot(outlier.shape = NA) +
+      geom_jitter(aes(color=Day),  height = 0, width = 0.2, size=3) + 
+      theme_classic(base_size = 16) +
+      stat_compare_means(vjust=0.5, label.y = 5, paired=T, size = 5)+
+      ylab('Shannon Diversity') +  xlab('') +
+      facet_wrap(~Day) +
+      theme(legend.position = 'none')
+data_s1a = p$data %>% select(Sample,Diet,Day,shannon)
+ggsave('Plots/Virome/Fig. S1a - Alpha Diversity.png',height = 3.5, width = 6)
+```
+
+# Fig. S1b - Grouped Genus Barplot
+
+```{r}
+# New phyloseq object:
+genus <- tax_glom(ps.rel, taxrank="Genus", NArm=FALSE)
+# Must be at least 1%
+genus2 = prune_taxa(taxa_sums(genus)/nsamples(genus) > 0.01, genus) %>% 
+  subset_taxa(!is.na(Genus)) %>% 
+  merge_samples('Group') # Proportions for each group now add up to 10 because n=10 for each group
+
+temp = 10-phyloseq::sample_sums(genus2) # Everything under 1% & unassigned reads
+temp2 = otu_table(genus2) %>% as.data.frame() %>% 
+  cbind('Unknown/Other' = temp) %>% as.matrix()
+temp2 = temp2/10 # Convert to average proportions /1
+temp3 = tax_table(genus2) %>% as.data.frame() %>% # Adjust the taxonomy table
+  rbind('Unknown/Other' = c('Bacteria',rep('Unknown/Other',6))) %>% as.matrix()
+sample_temp = sample_data(genus2) %>% as.data.frame()
+# Re-add this info, as it's corrupted by merge_samples
+sample_temp$Diet[str_detect(row.names(sample_temp), 'CON')] = 'CON'
+sample_temp$Diet[str_detect(row.names(sample_temp), 'LM')] = 'LM'
+sample_temp$Day[str_detect(row.names(sample_temp), '0')] = 'Day 0'
+sample_temp$Day[str_detect(row.names(sample_temp), '28')] = 'Day 28'
+genus3 <- phyloseq(otu_table(temp2, taxa_are_rows = F), sample_data(sample_temp), tax_table(temp3))
+
+# Make plot
+bb <- psmelt(genus3)
+bb_order <- c(unique(bb %>% filter(Genus != 'Unknown/Other') %>% pull(Genus)) %>% sort(),'Unknown/Other')
+bb$Genus<- factor(bb$Genus, bb_order) #fill to total=1
+
+p = ggplot(bb, aes(Day, Abundance, fill = Genus))+
+  geom_bar(stat = "identity", 
+           position = "stack", 
+           color = "black") +
+  theme_classic(base_size = 18) +
+  guides(fill = guide_legend(override.aes = list(colour = NULL), reverse=F)) + 
+  theme(legend.key = element_rect(colour = "black")) + 
+  theme(legend.position = "right",
+        legend.text = element_text(size = 16)) + ylab('Rel. Abundance') + 
+  facet_wrap('Diet') + xlab('')
+data_s1b = p$data %>% select(Sample,Diet,Day,Genus,Abundance)
+
+ggsave('Plots/Virome/Fig. S1b - Grouped Genus Barplot.png',height = 6, width = 9)
+```
+
+# Fig. 2e - Boxplots of Family-Level Sig Fungi
+
+```{r Load Maaslin2 Stats}
+# Maaslin stats
+maas = readxl::read_xlsx('Results Files/Virome/Fig. 2 Supplement - Viral Maaslin2.xlsx',sheet='Genus') %>% filter(qval<0.01)
+
+ps.rel = ps %>% tax_glom('Genus') %>% microbiome::transform('compositional') %>% 
+  subset_taxa(Genus %in% maas$Genus) %>% psmelt() %>% 
+  filter(Day=='Day 28') %>% 
+  left_join(maas %>% select(Genus,coef,qval)) %>% 
+  mutate(symb = ifelse(qval>0.05,'',ifelse(qval>0.01,"  * ",
+                      ifelse(qval>0.001,' ** ',ifelse(qval>0.0001,' ***','****')))))
+```
+
+```{r Create Boxplots}
+# POSITIVE ASSOCIATIONS
+# Set order
+order = ps.rel %>% filter(Diet=='LM') %>% 
+  group_by(Genus) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = ps.rel %>% group_by(Genus) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Genus = factor(Genus, levels = order$Genus))
+max_pos = max_per_path %>%
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef>0]) %>% droplevels() %>% 
+  arrange(Genus) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Positive assoc
+temp = ps.rel %>% mutate(Genus = factor(Genus, levels = order$Genus)) %>% 
+  left_join(max_pos) %>% 
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef>0]) %>% droplevels() %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Genus, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10()
+
+#~~~~~~~~~~~~~~~~~~~~~~~
+
+# NEGATIVE ASSOCIATIONS
+# Set order
+order = ps.rel %>% filter(Diet=='CON') %>% 
+  group_by(Genus) %>% 
+  summarize(Abundance = mean(Abundance)) %>% ungroup() %>% 
+  arrange(-Abundance)
+
+# Set x and y coords for the p values
+cols = c('CON' = '#FC746E','LM' = '#01BEC3')
+max_per_path = ps.rel %>% group_by(Genus) %>% summarize(M = 2*max(Abundance)) %>% ungroup %>% 
+  mutate(Genus = factor(Genus, levels = order$Genus))
+max_neg = max_per_path %>%
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef<0]) %>% droplevels() %>% 
+  arrange(Genus) %>% mutate(N = c(1:nrow(.))+0.25)
+
+# Negative assoc
+temp2 = ps.rel %>% mutate(Genus = factor(Genus, levels = order$Genus)) %>% 
+  left_join(max_neg) %>% 
+  filter(Genus %in% ps.rel$Genus[ps.rel$coef<0]) %>% droplevels() %>% 
+  mutate(Abundance = Abundance + min(.$Abundance[.$Abundance !=0])/2) %>% 
+  ggplot(aes(Genus, Abundance, fill = Diet)) +
+   geom_boxplot(outlier.shape = NA) +
+   scale_fill_manual(values = cols) +
+   geom_point(position = position_jitterdodge(jitter.height = 0, jitter.width = 0.2),size=1) +
+   theme_classic(base_size = 18) + 
+   guides(x = guide_axis(angle = 45)) +
+   ylab('Rel Abundance') + xlab('') +
+  geom_text(aes(x=N,y=M,label=symb), size = 6,lineheight=0.8,hjust=1) +
+  scale_y_log10()
+
+ggarrange(plotlist = list(temp,temp2),ncol=2, widths = c(3,2), common.legend = T, legend = 'right')
+data_s1c_increased = temp$data %>% select(Sample,Diet,Day,Genus,Abundance)
+data_s1c_decreased = temp2$data %>% select(Sample,Diet,Day,Genus,Abundance)
+
+ggsave('Plots/Virome/Fig. S1c - Genus Boxplots.png', height = 5, width =10)
+```
+
+# Save Source Data
+
+```{r}
+L = list('Fig S1a' = data_s1a, 
+         'Fig S1b' = data_s1b, 
+         'Fig S1c Inc' = data_s1c_increased, 
+         'Fig S1c Dec' = data_s1c_decreased)
+writexl::write_xlsx(L,'Source Data/Source Data Fig S1.xlsx')
+```
